@@ -23,21 +23,16 @@ def mix_it_up(bit_list, start_index, final_list):
     if start_index >= len(bit_list):
         return
 
-    #depth = current_depth
     new_bit_list = list(bit_list)
 
     if not (new_bit_list[start_index] == 1):
         new_bit_list[start_index] = 1
         final_list.append(list(new_bit_list))
-        #print(final_list)
         mix_it_up(new_bit_list, start_index+1, final_list)
 
 
     if not(new_bit_list[start_index] == 0):
         new_bit_list[start_index] = 0
-        #if not(start_index == depth):
-         #   final_list.append(list(new_bit_list))
-        #print(final_list)
         mix_it_up(new_bit_list, start_index+1, final_list)
 
 hej = bitStr(3)
