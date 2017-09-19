@@ -31,7 +31,7 @@ def get_count_sorted_bag_of_words(filename, key):
 
     new_word_dict = dict(word_dict)
     for key, value in new_word_dict.items():
-        if not value > 1:
+        if not value > 8:
             del word_dict[key]
 
     return sorted(word_dict.keys(), key=lambda item: word_dict[item])
