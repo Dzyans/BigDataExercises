@@ -12,16 +12,13 @@ def sumFunction(int n, int m):
     return result
 
 def runLoop():
-    cdef int start, stop
+    cdef double start, stop
     cdef double result
-
 
     start = timeit.default_timer()
     for i in range(0, 5000):
         result = sumFunction(1, 10000)
     stop = timeit.default_timer()
 
-    print result
-    print start
-    print stop
-    return (stop -start)
+    print "result: " + str(result)
+    return "running time: " + str(stop -start)
