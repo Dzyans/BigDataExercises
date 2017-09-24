@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.optimize import curve_fit
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 f = open ( 'pointFile.txt' , 'r')
 l = [ map(float,line.split(' ')) for line in f ]
@@ -26,7 +26,7 @@ def fit_func(x, a, b, c, d):
 
 params = curve_fit(fit_func, x, y)
 
-print params[0]
+print (params[0])
 
 # calculate polynomial
 #z = np.polyfit(x, y, 3)
