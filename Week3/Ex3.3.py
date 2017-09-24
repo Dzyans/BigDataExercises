@@ -8,7 +8,7 @@ def sumFunction(n,m):
     return result        
 
 start = timeit.default_timer()
-for i in range (0,10000):
-    print sumFunction(1,10)
+for i in range (0, 5000):
+    sumFunction(1,10000)
 stop = timeit.default_timer()
 print (stop - start)
