@@ -15,10 +15,10 @@ for p in l:
 points = np.array([(1, 1), (2, 4), (3, 1), (9, 3)])
 
 # get x and y vectors
-x = np.array(xList)
-y = np.array(yList)
+x_ = np.array(xList)
+y_ = np.array(yList)
 
-def fit_func(x, a, b, c, d):
+def fit_func(x_, a, b, c, d):
     return a*x*x*x + b*x*x + c*x + d
 
 params = curve_fit(fit_func, x, y)
@@ -27,13 +27,15 @@ print (params[0])
 
 #maybe we should plot it?
 
-def graph(formula, x_range):  
+def graph(formula, x_range,x_,y_):  
     x = np.array(x_range)  
     y = eval(formula)
-    plt.plot(x, y)  
+    plt.plot(x, y)
+    plt.plot(x_, y_, 'ro')
+    plt.plot()
     plt.show()
 
-graph('3*x**3+x*x-2*x+3.9', range(-20, 20))
+graph('3*x**3+x*x-2*x+3.9', range(-20, 20),x_,y_)
 
 
 #plt.plot(x,y,'o', x_new, y_new)
