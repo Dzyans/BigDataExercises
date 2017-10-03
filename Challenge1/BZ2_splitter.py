@@ -16,14 +16,16 @@ def split_xml(filename):
     chunkfile = bz2.BZ2File(chunkname(filecount), 'w')
     # Read line by line
     bzfile = bz2.BZ2File(filename)
-    chunkfile.write('<root>\n')
+    chunkfile.write("<root>")
     for line in bzfile:
         chunkfile.write(line)
         # the </page> determines new wiki page
         if '</page>' in line:
             pagecount += 1
         if pagecount > 1999:
-            print chunkname() # For Debugging
+            #print chunkname() # For Debugging
+            chunkfile.write("</mediawiki>")
+            chunkfile.write("</root>")
             chunkfile.close()
             pagecount = 0 # RESET pagecount
             filecount += 1 # increment filename           
@@ -35,4 +37,4 @@ def split_xml(filename):
 
 if __name__ == '__main__':
     # When the script is self run
-    split_xml('/zhome/a5/5/77597/Downloads/enwiki-20170620-pages-articles-multistream.xml.bz2')
+    split_xml('enwiki-20170820-pages-articles.xml.bz2')
