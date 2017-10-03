@@ -1,44 +1,3 @@
- has the property that all measures of its central tendency, including not just the mean but also the aforementioned median and the [[Mode (statistics)|mode]], are equal to each other. This property does not hold however, in the cases of a great many probability distributions, such as the [[lognormal distribution]] illustrated here.
-
-==Angles==
-{{Main|Mean of circular quantities}}
-
-Particular care must be taken when using cyclic data, such as phases or [[angle]]s. Naïvely taking the arithmetic mean of 1° and 359° yields a result of 180°.
-This is incorrect for two reasons:
-* Firstly, angle measurements are only defined up to an additive constant of [[degree (angle)|360°]] (or 2π, if measuring in [[radian]]s). Thus one could as easily call these 1° and −1°, or 361° and 719°, each of which gives a different average.
-* Secondly, in this situation, 0° (equivalently, 360°) is geometrically a better ''average'' value: there is lower [[statistical dispersion|dispersion]] about it (the points are both 1° from it, and 179° from 180°, the putative average).
-
-In general application, such an oversight will lead to the average value artificially moving towards the middle of the numerical range. A solution to this problem is to use the optimization formulation ([[viz.]], define the mean as the central point: the point about which one has the lowest dispersion), and redefine the difference as a modular distance (i.e., the distance on the circle: so the modular distance between 1° and 359° is 2°, not 358°).
-
-==See also==
-* [[Average]]
-* [[Fréchet mean]]
-* [[Generalized mean]]
-* [[Geometric mean]]
-* [[Mode (statistics)|Mode]]
-* [[Sample mean and covariance]]
-* [[Standard error of the mean]]
-* [[Summary statistics]]
-
-==References==
-{{reflist}}
-
-==Further reading==
-* {{cite book| last = Huff| first = Darrell| title = How to Lie with Statistics| year = 1993| publisher = W. W. Norton| isbn = 978-0-393-31072-6 }}
-
-==External links==
-* [http://www.sengpielaudio.com/calculator-geommean.htm Calculations and comparisons between arithmetic and geometric mean of two numbers]
-* {{MathWorld | urlname= ArithmeticMean | title= Arithmetic Mean}}
-* [http://www.fxsolver.com/browse/formulas/Arithmetic+Mean Calculate the arithmetic mean of a series of numbers on fxSolver]
-
-{{Statistics|descriptive}}
-{{Portal bar|Statistics}}
-
-{{DEFAULTSORT:Arithmetic Mean}}
-[[Category:Means]]</text>
-      <sha1>894enc40ssbegik6h0avxiso85z8h7n</sha1>
-    </revision>
-  </page>
   <page>
     <title>American Football Conference</title>
     <ns>0</ns>
@@ -6711,30 +6670,3 @@ Normal carboxylic acids are the direct union of a carbonyl group and a hydroxyl 
       <sha1>acgxkmdvti4fmoylpsp99gyr3zs63ce</sha1>
     </revision>
   </page>
-  <page>
-    <title>Asphalt</title>
-    <ns>0</ns>
-    <id>657</id>
-    <revision>
-      <id>796182490</id>
-      <parentid>795905273</parentid>
-      <timestamp>2017-08-19T01:59:37Z</timestamp>
-      <contributor>
-        <username>GreenC bot</username>
-        <id>27823944</id>
-      </contributor>
-      <minor />
-      <comment>Rescued 2 archive links; remove 1 link; reformat 1 link. [[User:Green Cardamom/WaybackMedic_2.1|Wayback Medic 2.1]]</comment>
-      <model>wikitext</model>
-      <format>text/x-wiki</format>
-      <text xml:space="preserve">{{Redirect|Bitumen|naturally occurring bituminous sands used for petroleum production|Oil sands}}
-{{other uses}}
-{{hatnote|Note: The terms '''bitumen''' and '''asphalt''' are mostly interchangeable, except where asphalt is used as a shorthand for [[asphalt concrete]].}}
-{{Use dmy dates|date=March 2014}}
-[[File:Bitumen.jpg|thumb|Natural bitumen from the [[Dead Sea]]]]
-[[File:Refined bitumen.JPG|thumb|Refined asphalt]]
-[[File:University of Queensland Pitch drop experiment-white bg.jpg|thumb|upright|The University of Queensland [[pitch drop experiment]], demonstrating the [[viscosity]] of asphalt]]
-
-'''Asphalt''' {{IPAc-en|ˈ|æ|s|ˌ|f|ɔː|l|t|,_|-|ˌ|f|ɑː|l|t}}, also known as '''bitumen''' {{IPAc-en|ˈ|b|ɪ|tʃ|ə|m|ᵻ|n|,_|b|ᵻ|ˈ|t|uː|m|ᵻ|n}}, is a sticky, black, and highly [[viscosity|viscous]] liquid or semi-solid form of [[petroleum]]. It may be found in natural deposits or may be a refined product, and is classed as a [[Pitch (resin)|pitch]]. Before the 20th century, the term '''asphaltum''' was also used.&lt;ref name=&quot;Abraham1938&quot;&gt;{{cite book|first=Herbert|last=Abraham|year=1938| title=Asphalts and Allied Substances: Their Occurrence, Modes of Production, Uses in the Arts, and Methods of Testing | edition=4th| publisher=D. Van Nostrand Co| location=New York |url=https://archive.org/details/asphaltsandallie031010mbp|accessdate=16 November 2009}} Full text at Internet Archive (archive.org)&lt;/ref&gt; The word is derived from the [[Ancient Greek]] ἄσφαλτος ''ásphaltos''.&lt;ref&gt;[http://www.chambers.co.uk/search.php?query=asphalt&amp;title=21st asphalt] {{webarchive|url=https://web.archive.org/web/20160309181634/http://www.chambers.co.uk/search.php?query=asphalt&amp;title=21st |date=9 March 2016 }}, Chambers 21st Century Dictionary&lt;/ref&gt;
-
-The primary use (70%) of asphalt is in road construction, where it is used as the glue or binder mixed with [[construction aggregate|aggregate]] particles to create [[asphalt concrete]]. Its other main uses are for [[bituminous waterproofing]] products, including production of [[roofing felt]] and for sealing flat roofs.&lt;ref name=Ullmann&gt;Anja Sörensen and Bodo Wichert &quot;Asphalt and Bitumen&quot; in Ullmann's Encyclopedia of Industrial Chemistry Wiley-VCH, Weinheim, 2009. {{DOI|10.1002/14356007.a03_169.pub2}}http://www.qrpoil.com/site/?bitumen&lt;/ref&gt;
