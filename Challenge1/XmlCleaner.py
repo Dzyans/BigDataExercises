@@ -1,37 +1,33 @@
-import zipfile as zip
-import os
-import fnmatch as fn
-import re
-from xml.etree import ElementTree as ET
-def iterate_dir(path):
-    dir = os.path.abspath("")
-    extension = ".zip"
-    for item in os.listdir(dir):
-        if item.endswith(extension):
-            zip_file = zip.ZipFile(item, 'r')
-            for name in zip_file.namelist():
-                if fn.fnmatch(name, '*.xml'):
-                    cleanXmlFiles(zip_file.read(name))
-            #print(os.path.join(dir, item))
-            #zip_file.extractall(dir+"/out")
-            #zip_file.close()
+from lxml import etree as et
+import bz2file as BZ2File
 
-def cleanXmlFiles(name):
-    tree = ET.fromstring(name)
-    ET.tostring(tree, method='text')
-    #match = re.search(r'[0-9A-Z]', name)
-    #print match.string
-    #clean = re.match(u"[^(\w+)]+",u" ",name)
-    #print clean
+def cleanText(text):
+    return (text.replace('\n', ' ')).strip(',.').lower()
+    
+def clean_xml(path):
+    #if path.endswith('.bz2'):
+    print 'using bz2 file'
+    with BZ2File(path) as xml_file:
+        parser = et.iterparse(xml_file, events=('end',),tag='text')
+    #elif path.endswith('.xml'):
+    #    print 'using xml file'
+    #    parser = et.iterparse(path, events=('end',),tag="text")
+    #else:
+    #    print 'error'
+    #    return
+        for events, elem in parser: 
+                print cleanText(elem.text)             
+        elem.clear()
+    
+    # Also eliminate now-empty references from the root node to node        
+    while elem.getprevious() is not None:
+        del elem.getparent()[0]    
+    
+path = "/zhome/a5/5/77597/Downloads/enwiki-20170620-pages-articles-multistream.xml.bz2"
+#path = "/zhome/a5/5/77597/python/BigDataExercises/Challenge1/duncan.xml"
+#path = "/zhome/a5/5/77597/python/BigDataExercises/Challenge1/udklip.xml"
 
-    #tree = etree.parse(name)
-
-    #notags = etree.tostring(tree, encoding="utf8", method="text")
-    #print notags
-    #xmlx.elemdict(name.)
-    #for line in name.:
-     #   print line
-        ##print re.match("(\w+)", line)
-
-
-iterate_dir("jek")
+print path
+cleaned = clean_xml(path)
+    
+            
