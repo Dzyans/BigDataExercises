@@ -14,9 +14,11 @@ def split_xml(filename):
     #open chunkfile in write mode
     chunkname = lambda filecount: os.path.join("chunks","chunk-"+str(filecount)+".xml.bz2")
     chunkfile = bz2.BZ2File(chunkname(filecount), 'w')
+    chunkfile.write("<mediawiki>\n")    
     # Read line by line
     bzfile = bz2.BZ2File(filename)
-    chunkfile.write("<root>")
+    for _ in xrange(1):
+        next(bzfile)
     for line in bzfile:
         chunkfile.write(line)
         # the </page> determines new wiki page
@@ -25,11 +27,12 @@ def split_xml(filename):
         if pagecount > 1999:
             #print chunkname() # For Debugging
             chunkfile.write("</mediawiki>")
-            chunkfile.write("</root>")
             chunkfile.close()
             pagecount = 0 # RESET pagecount
             filecount += 1 # increment filename           
             chunkfile = bz2.BZ2File(chunkname(filecount), 'w')
+            chunkfile.write("<mediawiki>\n")
+
     try:
         chunkfile.close()
     except:

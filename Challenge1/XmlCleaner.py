@@ -9,16 +9,16 @@ def parse_xml(parser):
     for events, elem in parser:
         #print elem.tag        
         print cleanText(elem.text)             
-#    elem.clear()
+    elem.clear()
     # Also eliminate now-empty references from the root node to node        
-#    while elem.getprevious() is not None:
-#        del elem.getparent()[0]        
+    while elem.getprevious() is not None:
+        del elem.getparent()[0]        
    
 def clean_xml(path):
     if path.endswith('.bz2'):
         print 'using bz2 file'
         with BZ2File(path) as xml_file:
-            parser = et.iterparse(xml_file, events=('end',),tag=("{http://www.mediawiki.org/xml/export-0.10/}text"))
+            parser = et.iterparse(xml_file, events=('end',),tag=("text"))
             parse_xml(parser)
     elif path.endswith('.xml'):
         print 'using xml file'
