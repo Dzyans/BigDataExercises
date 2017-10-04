@@ -1,11 +1,13 @@
 import re
 import os
-
+import numpy as np
 def lookup(pattern):
+    read_dictionary = np.load('my_file.npy').item()
+    print read_dictionary["thor"]
     counter = 0
-    for filename in os.listdir("A"):
+    for filename in os.listdir("B"):
         #print filename
-        with open("A/"+filename, 'r') as searchfile:
+        with open("B/"+filename, 'r') as searchfile:
             for line in searchfile:
                 result = match(pattern, line)
                 if len(result) > 0:

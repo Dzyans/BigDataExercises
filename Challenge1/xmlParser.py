@@ -1,6 +1,7 @@
-
+import numpy as np
 import xml.etree.ElementTree as etree
-def parseAndWrite(path, id_tag):
+def parseAndWrite(path, id_tag, files_size):
+    lookup_dict = {}
     counter = 0
     metaCounter = 0
     string_list = []
@@ -8,44 +9,58 @@ def parseAndWrite(path, id_tag):
     #with open("/home/dzyan/Dokumenter/enwiki-20170820-pages-articles-multistream.xml") as xml:
     current_title = "A"
     with open(path) as xml:
-        for event, elem in etree.iterparse(xml, events=('start', 'end', 'start-ns', 'end-ns')):
+        for event, elem in etree.iterparse(xml, events=('start', 'end')):
             if event == "end" and elem.tag == id_tag+"page":
-
                 for a in elem:
                     if a.tag == id_tag+"title":
                         the_title = "[-[-["+a.text+"]-]-]"
-                        #if current_title != a.text[0]:
-                            ##the we have changed article name
-                         #   current_title = a.text[0]
-                          #  print current_title
-                        #print a.text
-                        #if a.text[0] == "A" or a.text[0] == "a":
-                         #   proceed = True
-                          #  counter = counter +1
-                           # metaCounter = metaCounter+1
-                            #print counter
-                        #if(metaCounter > 1000):
-                         #   print "-----------done for now, "+ str(counter) +" files written"
-                          #  return string_list
                     if a.tag == id_tag+"revision":
                         for b in a:
                             if b.tag == id_tag+"text":
-                                text = cleanText(b.text)
-                                if '#redirect' in text:
-                                    #print "redirect ignored"
-                                    break ##ignore
-                                string_list.append(the_title + text + u"\n")
-                                metaCounter = metaCounter + 1
-                                counter = counter + 1
-                                ##when text tag is found and processed break out
+                                if type (b.text) is str:
+                                    text = cleanText(b.text)
+                                    if '#redirect' in text:
+                                        #print "redirect ignored"
+                                        #print text
+                                        break ##ignore
+                                    string_list.append(the_title + text + u"\n")
+                                    metaCounter = metaCounter + 1
+                                    counter = counter + 1
+                                    ##when text tag is found and processed break out
                                 break
-                if counter == 5000:
-                    writeToFile(string_list, "B/part"+ str(metaCounter/5000))
+                if counter == files_size:
+                    lookup_dict = update_dict(lookup_dict, string_list, metaCounter/files_size)
+                    print len(lookup_dict)
+                    writeToFile(string_list, "B/part"+ str(metaCounter/files_size))
                     counter = 0
                     ##reset and go on
                     string_list = []
                 elem.clear()
+                if metaCounter/files_size == 50:
+                    np.save('my_file.npy', lookup_dict)
+                    print "Done " + str(metaCounter) + " lines written"
+                    return
 
+
+
+def update_dict(lookup_dict, list_of_words, filename_nr):
+    the_dict = lookup_dict
+    fileList = []
+    for line in list_of_words:
+        words = line.split(' ')
+        for word in words:
+            if word in the_dict:
+                if word == ' ':
+                    break ##ignore lefter over blank sapaces
+                ##increment word count
+                fileList = the_dict[word]
+                fileList.append(filename_nr)
+                the_dict[word] = fileList
+            else:
+                fileList.append(filename_nr)
+                the_dict[word] = fileList
+
+    return the_dict
 
 def cleanText(text):
     return text.replace('\n', ' ').lower()
@@ -59,6 +74,4 @@ def writeToFile(the_list, filepath):
 
 path = "/home/dzyan/Dokumenter/enwiki-20170820-pages-articles-multistream.xml"
 tag_id = "{http://www.mediawiki.org/xml/export-0.10/}"
-listen = parseAndWrite(path, tag_id)
-#print listen
-writeToFile(listen, "A")
+parseAndWrite(path, tag_id, 500)
