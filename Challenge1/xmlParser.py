@@ -29,41 +29,43 @@ def parseAndWrite(path, id_tag, files_size):
                                     ##when text tag is found and processed break out
                                 break
                 if counter == files_size:
-                    lookup_dict = update_dict(lookup_dict, string_list, metaCounter/files_size)
+                    update_dict(lookup_dict, string_list, metaCounter/files_size)
                     print len(lookup_dict)
                     writeToFile(string_list, "B/part"+ str(metaCounter/files_size))
                     counter = 0
                     ##reset and go on
                     string_list = []
                 elem.clear()
-                if metaCounter/files_size == 5:
+                if metaCounter/files_size == 4000:
                     np.save('my_file.npy', lookup_dict)
                     print "Done " + str(metaCounter) + " lines written"
                     return
 
 
 
-def update_dict(lookup_dict, list_of_words, filename_nr):
-    the_dict = lookup_dict
-    fileList = []
+def update_dict(the_dict, list_of_words, filename_nr):
     cock_block_set = set()
+    ##set up the set of unique words
     for line in list_of_words:
         words = line.split(' ')
         for word in words:
             cock_block_set.add(word)
+    ##add them to dict
+    for word in cock_block_set:
+        if word in the_dict:
+            if word == ' ':
+                break  ##ignore lefter over blank sapaces
+                ##increment word count
+            #print "adding "+ word + " to dict"
+            the_dict[word].append(filename_nr)
+            #fileList.append(filename_nr)
+            #the_dict[word] = fileList
+        else:
+            fileList = list() ##key does not exist, so insert list at as value
+            fileList.append(filename_nr)
+            the_dict[word] = fileList
 
-        for word in cock_block_set:
-            if word in the_dict:
-                if word == ' ':
-                    break  ##ignore lefter over blank sapaces
-                    ##increment word count
-                fileList = the_dict[word]
-                fileList.append(filename_nr)
-                the_dict[word] = fileList
-            else:
-                fileList.append(filename_nr)
-                the_dict[word] = fileList
-
+    print str(len(cock_block_set)) + " words in set"
     return the_dict
 
 def cleanText(text):

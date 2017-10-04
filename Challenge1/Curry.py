@@ -2,8 +2,7 @@ import re
 import os
 import numpy as np
 def lookup(pattern):
-    read_dictionary = np.load('my_file.npy').item()
-    print read_dictionary["thor"]
+
     counter = 0
     for filename in os.listdir("B"):
         #print filename
@@ -24,10 +23,17 @@ def match(query, test_data):
     #print x
     pattern = re.compile(x)
     return pattern.findall(test_data)
-    
+
+def printout_dict():
+    read_dictionary = np.load('my_file.npy').item()
+    for k, v in read_dictionary.items():
+        print(k, v)
+
+
 #test = "i have a really nice cat in hat at home"
 #pattern = ["cat", [2,4], "hat"]
 pattern = ["when", [15,25],"republic",[15,25],"along"]
 
+printout_dict()
 #print match(pattern, test)
-lookup(pattern)
+#lookup(pattern)
