@@ -24,9 +24,12 @@ def parseAndWrite(path, id_tag):
                     if a.tag == id_tag+"revision" and proceed:
                        for b in a:
                           if b.tag == id_tag+"text":
-                             string_list.append(cleanText(b.text) + u"\n" + u"\n")
-                if len(string_list) == 100:
-                    writeToFile(string_list, "A/A"+ str(metaCounter/100))
+                            text = cleanText(b.text)
+                            if text == '##REDIRECT':
+                                break ##ignore
+                            string_list.append(cleanText(b.text) + u"\n" + u"\n")
+                if len(string_list) == 5000:
+                    writeToFile(string_list, "A/A"+ str(metaCounter/5000))
                     ##reset and go on
                     counter = 0
                     string_list = []
@@ -34,7 +37,7 @@ def parseAndWrite(path, id_tag):
 
 
 def cleanText(text):
-    return text.replace('\n', ' ')
+    return text.replace('\n', ' ').lower()
 
 def writeToFile(the_list, filepath):
     print "writing " + str(len(the_list)) + " to " + filepath
