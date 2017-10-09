@@ -42,7 +42,7 @@ def parseAndWrite(path, id_tag, files_size):
                     np.save('Meta/my_file'+ str(metaCounter/(files_size*1000)) +'.npy', lookup_dict)
                     ##reset lookup_dict
                     lookup_dict = dict()
-                    print "Done " + str(metaCounter) + 'lines written and stored in my_file'+ str(metaCounter/(files_size*100)) +'.npy'
+                    print "Done " + str(metaCounter) + 'lines written and stored in my_file'+ str(metaCounter/(files_size*1000)) +'.npy'
                     return
 
 
