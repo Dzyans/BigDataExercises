@@ -13,6 +13,8 @@ def parseAndWrite(path, id_tag, files_size):
             if event == "end" and elem.tag == id_tag+"page":
                 for a in elem:
                     if a.tag == id_tag+"title":
+                        if a.text == 'A' or a.text[0] == 'a':
+                            break
                         the_title = "[-[-["+a.text+"]-]-]"
                     if a.tag == id_tag+"revision":
                         for b in a:
@@ -31,7 +33,7 @@ def parseAndWrite(path, id_tag, files_size):
 
 
                 if counter == files_size:
-                    update_dict(lookup_dict, string_list, metaCounter/files_size)
+                    #update_dict(lookup_dict, string_list, metaCounter/files_size)
                     print len(lookup_dict)
                     writeToFile(string_list, "B/part"+ str(metaCounter/files_size))
                     counter = 0
@@ -39,9 +41,9 @@ def parseAndWrite(path, id_tag, files_size):
                     string_list = []
                 elem.clear()
                 if metaCounter > 0 and metaCounter % (files_size*1000) == 0:
-                    np.save('Meta/my_file'+ str(metaCounter/(files_size*1000)) +'.npy', lookup_dict)
+                    #np.save('Meta/my_file'+ str(metaCounter/(files_size*1000)) +'.npy', lookup_dict)
                     ##reset lookup_dict
-                    lookup_dict = dict()
+                    #lookup_dict = dict()
                     print "Done " + str(metaCounter) + 'lines written and stored in my_file'+ str(metaCounter/(files_size*1000)) +'.npy'
 
 

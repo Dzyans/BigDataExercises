@@ -1,17 +1,36 @@
 import re
 import os
 import numpy as np
-def lookup(pattern):
-
+def lookup(pattern, lookup_list):
+    hit = 0
+    print len(lookup_list)
     counter = 0
     for filename in os.listdir("B"):
-        #print filename
-        with open("B/"+filename, 'r') as searchfile:
+        filenum = int(filename[4:])
+
+        #print filenum
+        if(filenum) in lookup_list:
+            #print filename
+            with open("B/"+filename, 'r') as searchfile:
+                for line in searchfile:
+                    result = match(pattern, line)
+                    if len(result) > 0:
+                        hit = hit +1
+                        print result
+    print hit
+def simple_lookup(pattern, dicts):
+    print "doing simpe"
+    counter = 0
+    for filename in os.listdir("B"):
+
+       with open("B/"+filename, 'r') as searchfile:
             for line in searchfile:
                 result = match(pattern, line)
                 if len(result) > 0:
+                    print filename
                     print result
-
+                    counter = counter+1
+    print "done " + str(counter)
 def match(query, test_data):
     x = ''
     for element in query:
@@ -72,24 +91,24 @@ def GetList(words, dict_list):
     ll = []
     curList = []
     for MetaDict in dict_list:
-        print "next dict"
+        #print "next dict"
         curList = list()
         ll = []
         for key in words:
             if key in MetaDict:
-                print "word found in "
-                print MetaDict[key]
+             #   print "word found in "
+              #  print MetaDict[key]
                 ll.append(MetaDict[key])
         if(len(ll) > 0):
             curList = set(ll[0])
             for hej in range(1, len(ll)):
                 curList = set(curList).intersection(set(ll[hej]))
-            print "common values found"
-            print curList
-            cur_list_of_list.append(list(curList))
+            #print "common values found"
+            #print curList
+            cur_list_of_list = cur_list_of_list + list(curList)
             curList = []
 
-        print "hej"
+        #print "hej"
         #print len(cur_list_of_list)
         #print(cur_list_of_list)
 
@@ -100,10 +119,13 @@ def GetList(words, dict_list):
 #pattern = ["cat", [2,4], "hat"]
 #pattern = ["when", [15,25],"republic",[15,25],"along"]
 
-pattern = ["when", [15,25],"republic"]
+pattern = ["war", [15,25], "killed"]
 dicts = load_dicts()
 
-GetList(["republic","rhodesia"], dicts)
+hh = GetList(["war","killed"], dicts)
+
+lookup(pattern, hh)
+simple_lookup(pattern, hh)
 
 #print (printout_dict())
 #print match(pattern, test)
