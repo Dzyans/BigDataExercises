@@ -17,14 +17,14 @@ def parseAndWrite(path, id_tag, files_size):
         for event, elem in letree.iterparse(xml, events=('start', 'end')):
             if event == "end" and elem.tag == id_tag+"page":
                 total = total +1
-                proceed = False
+                proceed = True
                 justsaved = False
                 for a in elem:
                     if a.tag == id_tag+"title":
-                        if a.text[0] == 'A' or a.text[0] == 'a':
-                            proceed = True
-                        else:
-                            skipcounter = skipcounter +1
+                        #if a.text[0] == 'A' or a.text[0] == 'a':
+                         #   proceed = True
+                        #else:
+                         #   skipcounter = skipcounter +1
                         the_title = "[-[-["+a.text+"]-]-] "
                     if proceed and a.tag == id_tag+"revision":
                         #print the_title
@@ -47,26 +47,26 @@ def parseAndWrite(path, id_tag, files_size):
 
                 elem.clear()
                 if counter == files_size:
-                    update_dict(lookup_dict, string_list, metaCounter/files_size)
+                #    update_dict(lookup_dict, string_list, metaCounter/files_size)
                     #print len(lookup_dict)
                     print "total: " + str(total)
                     print metaCounter
                     print str(skipcounter) + " skipped"
-                    writeToFile(string_list, "A/part"+ str(metaCounter/files_size))
+                    writeToFile(string_list, "B/part"+ str(metaCounter/files_size))
                     print "done writing"
                     counter = 0
                     skipcounter = 0
                     ##reset and go on
                     string_list = []
 
-                if  justsaved == False and metaCounter > 0 and metaCounter % (files_size*200) == 0:
-                    np.save('Meta/my_file'+ str(metaCounter/(files_size*200)) +'.npy', lookup_dict)
+                #if  justsaved == False and metaCounter > 0 and metaCounter % (files_size*200) == 0:
+                 #   np.save('Meta/my_file'+ str(metaCounter/(files_size*200)) +'.npy', lookup_dict)
                     justsaved = True
                     ##reset lookup_dict
-                    lookup_dict = dict()
-                    print "Done " + str(metaCounter) + 'lines written and stored in my_file'+ str(metaCounter/(files_size*200)) +'.npy'
-    print "doing last save"
-    np.save('Meta/my_file' + str((metaCounter / (files_size * 200))+1) + '.npy', lookup_dict)
+                  #  lookup_dict = dict()
+                   # print "Done " + str(metaCounter) + 'lines written and stored in my_file'+ str(metaCounter/(files_size*200)) +'.npy'
+    #print "doing last save"
+    #np.save('Meta/my_file' + str((metaCounter / (files_size * 200))+1) + '.npy', lookup_dict)
     print "done"
 
 

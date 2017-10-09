@@ -6,30 +6,32 @@ def lookup(pattern, lookup_list):
     hit = 0
     #print len(lookup_list)
     counter = 0
-    for filename in os.listdir("A"):
+    for filename in os.listdir("B"):
         filenum = int(filename[4:])
 
         #print filenum
         if(filenum) in lookup_list:
             #print filename
-            with open("A/"+filename, 'r') as searchfile:
+            with open("B/"+filename, 'r') as searchfile:
                 for line in searchfile:
                     result = match(pattern, line)
                     if len(result) > 0:
                         hit = hit +1
                         print result
     print hit
-def simple_lookup(pattern, dicts):
+def simple_lookup(pattern):
     print "doing simple"
     counter = 0
-    for filename in os.listdir("A"):
-
-       with open("A/"+filename, 'r') as searchfile:
+    file_counter = 0
+    for filename in os.listdir("B"):
+       file_counter = file_counter +1
+       with open("B/"+filename, 'r') as searchfile:
             for line in searchfile:
                 result = match(pattern, line)
                 if len(result) > 0:
                     print filename
                     print result
+                    print str(file_counter) + " searched so far"
                     counter = counter+1
     print "done " + str(counter)
 def match(query, test_data):
@@ -74,9 +76,9 @@ def printout_dict(words):
      #   print(k, v)
 def load_dicts():
     dict_list = list()
-    for filename in os.listdir("Meta"):
+    for filename in os.listdir("MetaB"):
         # print filename
-        new_dict = np.load('Meta/' + filename).item()
+        new_dict = np.load('MetaB/' + filename).item()
         print "loaded dict " + filename
         print len(new_dict)
         dict_list.append(new_dict)
@@ -117,19 +119,22 @@ def GetList(words, dict_list):
 #pattern = ["cat", [2,4], "hat"]
 #pattern = ["when", [15,25],"republic",[15,25],"along"]
 
-pattern = ["war", [15,25], "killed"]
+pattern = ["cats",[0,10], "are", [0,10], "to"]
+#pattern = ["or",[0,10], "or", [0,10], "or"]
+start_time = time.time()
 dicts = load_dicts()
-
-hh = GetList(["war","killed"], dicts)
+print("---dicts loaded in %s seconds ---" % (time.time() - start_time))
 
 start_time = time.time()
+#hh = GetList(["or"], dicts)
+hh = GetList(["cats","are","to"], dicts)
 
 lookup(pattern, hh)
 
 print("--- %s seconds ---" % (time.time() - start_time))
 start_time = time.time()
 
-simple_lookup(pattern, hh)
+simple_lookup(pattern)
 
 print("--- %s seconds ---" % (time.time() - start_time))
 #print (printout_dict())
