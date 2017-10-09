@@ -10,8 +10,8 @@ def lookup(pattern, lookup_list):
 
         #print filenum
         if(filenum) in lookup_list:
-            #print filename
-            with open("B/"+filename, 'r') as searchfile:
+            print filename
+            with open("A/"+filename, 'r') as searchfile:
                 for line in searchfile:
                     result = match(pattern, line)
                     if len(result) > 0:
@@ -21,9 +21,9 @@ def lookup(pattern, lookup_list):
 def simple_lookup(pattern, dicts):
     print "doing simpe"
     counter = 0
-    for filename in os.listdir("B"):
+    for filename in os.listdir("A"):
 
-       with open("B/"+filename, 'r') as searchfile:
+       with open("A/"+filename, 'r') as searchfile:
             for line in searchfile:
                 result = match(pattern, line)
                 if len(result) > 0:
@@ -83,9 +83,6 @@ def load_dicts():
     return dict_list
 
 def GetList(words, dict_list):
-
-            ##dict_list.add(np.load('Meta/my_file1.npy').item())
-    print "done loading dict"
     print len(dict_list)
     cur_list_of_list = []
     ll = []
@@ -96,15 +93,15 @@ def GetList(words, dict_list):
         ll = []
         for key in words:
             if key in MetaDict:
-             #   print "word found in "
-              #  print MetaDict[key]
+                print "word found in "
+                print MetaDict[key]
                 ll.append(MetaDict[key])
         if(len(ll) > 0):
             curList = set(ll[0])
             for hej in range(1, len(ll)):
                 curList = set(curList).intersection(set(ll[hej]))
-            #print "common values found"
-            #print curList
+            print "common values found"
+            print curList
             cur_list_of_list = cur_list_of_list + list(curList)
             curList = []
 

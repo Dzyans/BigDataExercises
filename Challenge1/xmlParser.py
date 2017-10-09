@@ -59,14 +59,14 @@ def parseAndWrite(path, id_tag, files_size):
                     ##reset and go on
                     string_list = []
 
-                if  justsaved == False and metaCounter > 0 and metaCounter % (files_size*100) == 0:
-                    np.save('Meta/my_file'+ str(metaCounter/(files_size*400)) +'.npy', lookup_dict)
+                if  justsaved == False and metaCounter > 0 and metaCounter % (files_size*200) == 0:
+                    np.save('Meta/my_file'+ str(metaCounter/(files_size*200)) +'.npy', lookup_dict)
                     justsaved = True
                     ##reset lookup_dict
                     lookup_dict = dict()
-                    print "Done " + str(metaCounter) + 'lines written and stored in my_file'+ str(metaCounter/(files_size*1000)) +'.npy'
+                    print "Done " + str(metaCounter) + 'lines written and stored in my_file'+ str(metaCounter/(files_size*200)) +'.npy'
     print "doing last save"
-    np.save('Meta/my_file' + str(metaCounter / (files_size * 400)) + '.npy', lookup_dict)
+    np.save('Meta/my_file' + str((metaCounter / (files_size * 200))+1) + '.npy', lookup_dict)
     print "done"
 
 
