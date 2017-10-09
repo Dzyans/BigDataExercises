@@ -5,7 +5,7 @@ def lookup(pattern, lookup_list):
     hit = 0
     print len(lookup_list)
     counter = 0
-    for filename in os.listdir("B"):
+    for filename in os.listdir("A"):
         filenum = int(filename[4:])
 
         #print filenum
