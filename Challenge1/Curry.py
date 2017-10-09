@@ -1,16 +1,17 @@
 import re
 import os
+import time
 import numpy as np
 def lookup(pattern, lookup_list):
     hit = 0
-    print len(lookup_list)
+    #print len(lookup_list)
     counter = 0
     for filename in os.listdir("A"):
         filenum = int(filename[4:])
 
         #print filenum
         if(filenum) in lookup_list:
-            print filename
+            #print filename
             with open("A/"+filename, 'r') as searchfile:
                 for line in searchfile:
                     result = match(pattern, line)
@@ -19,7 +20,7 @@ def lookup(pattern, lookup_list):
                         print result
     print hit
 def simple_lookup(pattern, dicts):
-    print "doing simpe"
+    print "doing simple"
     counter = 0
     for filename in os.listdir("A"):
 
@@ -83,7 +84,7 @@ def load_dicts():
     return dict_list
 
 def GetList(words, dict_list):
-    print len(dict_list)
+    #print len(dict_list)
     cur_list_of_list = []
     ll = []
     curList = []
@@ -93,15 +94,15 @@ def GetList(words, dict_list):
         ll = []
         for key in words:
             if key in MetaDict:
-                print "word found in "
-                print MetaDict[key]
+     #           print "word found in "
+      #          print MetaDict[key]
                 ll.append(MetaDict[key])
         if(len(ll) > 0):
             curList = set(ll[0])
             for hej in range(1, len(ll)):
                 curList = set(curList).intersection(set(ll[hej]))
-            print "common values found"
-            print curList
+       #     print "common values found"
+        #    print curList
             cur_list_of_list = cur_list_of_list + list(curList)
             curList = []
 
@@ -121,9 +122,16 @@ dicts = load_dicts()
 
 hh = GetList(["war","killed"], dicts)
 
+start_time = time.time()
+
 lookup(pattern, hh)
+
+print("--- %s seconds ---" % (time.time() - start_time))
+start_time = time.time()
+
 simple_lookup(pattern, hh)
 
+print("--- %s seconds ---" % (time.time() - start_time))
 #print (printout_dict())
 #print match(pattern, test)
 #lookup(pattern)#
