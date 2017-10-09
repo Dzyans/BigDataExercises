@@ -25,11 +25,18 @@ def match(query, test_data):
     return pattern.findall(test_data)
 
 def printout_dict(words):
-    read_dictionary = np.load('Meta/my_file1.npy').item()
+    dict_list = list()
+    for filename in os.listdir("Meta"):
+        #print filename
+        dict_list.append(np.load('Meta/'+filename).item())
+        ##dict_list.add(np.load('Meta/my_file1.npy').item())
     print "done loading dict"
+    print len(dict_list)
     list_of_lists = []
-    for key in words:
-        list_of_lists.append(read_dictionary[key])
+    for MetaDict in dict_list:
+        for key in words:
+            if key in MetaDict:
+                list_of_lists.append(MetaDict[key])
 
     print list_of_lists
     if len(list_of_lists) == 1:
