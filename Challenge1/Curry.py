@@ -33,6 +33,7 @@ def printout_dict(words):
     print "done loading dict"
     print len(dict_list)
     list_of_lists = []
+
     for MetaDict in dict_list:
         for key in words:
             if key in MetaDict:
@@ -51,6 +52,39 @@ def printout_dict(words):
     print curset
     #for k, v in read_dictionary.items():
      #   print(k, v)
+def load_dicts():
+    dict_list = list()
+    for filename in os.listdir("Meta"):
+        # print filename
+        dict_list.append(np.load('Meta/' + filename).item())
+
+    return dict_list
+
+def GetList(words, dict_list):
+
+            ##dict_list.add(np.load('Meta/my_file1.npy').item())
+        print "done loading dict"
+        print len(dict_list)
+        cur_list_of_list = []
+        ll = []
+        curList = []
+        for MetaDict in dict_list:
+            print "next dict"
+            for key in words:
+                if key in MetaDict:
+                    print "word found in "
+                    print MetaDict[key]
+                    ll.append(MetaDict[key])
+            curList = set(ll[0])
+            for hej in range(1, len(ll)):
+                curList = set(curList).intersection(set(ll[hej]))
+
+            cur_list_of_list.append(list(curList))
+            curList = []
+
+        print "hej"
+        print len(cur_list_of_list)
+        print(cur_list_of_list)
 
 
 #test = "i have a really nice cat in hat at home"
@@ -58,8 +92,19 @@ def printout_dict(words):
 #pattern = ["when", [15,25],"republic",[15,25],"along"]
 
 pattern = ["when", [15,25],"republic"]
+dicts = load_dicts()
 
+GetList(["republic","rhodesia"], dicts)
 
-print (printout_dict(["republic","rhodesia"]))
+#print (printout_dict())
 #print match(pattern, test)
-lookup(pattern)
+#lookup(pattern)#
+#if len(list_of_lists) == 1:
+#    cur_list_of_list.append(list_of_lists)
+#else:
+
+#curset = set(list_of_lists[0])
+
+#for d in list_of_lists:
+#
+#cur_list_of_list.append(curset)
