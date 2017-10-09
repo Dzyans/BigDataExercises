@@ -24,7 +24,9 @@ def split_xml(filename):
         # the </page> determines new wiki page
         if '</page>' in line:
             pagecount += 1
-        if pagecount > 1999:
+            if pagecount % 5000 == 0:
+                print pagecount
+        if pagecount > 199999:
             #print chunkname() # For Debugging
             chunkfile.write("</mediawiki>")
             chunkfile.close()
