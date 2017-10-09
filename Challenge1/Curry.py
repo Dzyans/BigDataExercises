@@ -25,7 +25,7 @@ def match(query, test_data):
     return pattern.findall(test_data)
 
 def printout_dict(words):
-    read_dictionary = np.load('my_file.npy').item()
+    read_dictionary = np.load('Meta/my_file0.npy').item()
     print "done loading dict"
     list_of_lists = []
     for key in words:
@@ -40,6 +40,7 @@ def printout_dict(words):
     for d in list_of_lists:
         curset = set(d).intersection(curset)
 
+    print "hej"
     print curset
     #for k, v in read_dictionary.items():
      #   print(k, v)
@@ -52,6 +53,6 @@ def printout_dict(words):
 pattern = ["when", [15,25],"republic"]
 
 
-#print (printout_dict(["when","republic"]))
+print (printout_dict(["when","rhodesia"]))
 #print match(pattern, test)
 lookup(pattern)

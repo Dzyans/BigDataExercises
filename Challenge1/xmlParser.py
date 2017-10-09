@@ -28,6 +28,8 @@ def parseAndWrite(path, id_tag, files_size):
                                     counter = counter + 1
                                     ##when text tag is found and processed break out
                                 break
+
+
                 if counter == files_size:
                     update_dict(lookup_dict, string_list, metaCounter/files_size)
                     print len(lookup_dict)
@@ -36,10 +38,13 @@ def parseAndWrite(path, id_tag, files_size):
                     ##reset and go on
                     string_list = []
                 elem.clear()
-                if metaCounter/files_size == 1000:
-                    np.save('my_file.npy', lookup_dict)
-                    print "Done " + str(metaCounter) + " lines written"
+                if metaCounter > 0 and metaCounter % (files_size*1000) == 0:
+                    np.save('Meta/my_file'+ str(metaCounter/(files_size*1000)) +'.npy', lookup_dict)
+                    ##reset lookup_dict
+                    lookup_dict = dict()
+                    print "Done " + str(metaCounter) + 'lines written and stored in my_file'+ str(metaCounter/(files_size*100)) +'.npy'
                     return
+
 
 
 
@@ -80,4 +85,4 @@ def writeToFile(the_list, filepath):
 
 path = "/home/dzyan/Dokumenter/enwiki-20170820-pages-articles-multistream.xml"
 tag_id = "{http://www.mediawiki.org/xml/export-0.10/}"
-parseAndWrite(path, tag_id, 50)
+parseAndWrite(path, tag_id, 200)
