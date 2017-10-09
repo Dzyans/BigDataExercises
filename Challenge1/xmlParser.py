@@ -36,7 +36,7 @@ def parseAndWrite(path, id_tag, files_size):
                     ##reset and go on
                     string_list = []
                 elem.clear()
-                if metaCounter/files_size == 4000:
+                if metaCounter/files_size == 1000:
                     np.save('my_file.npy', lookup_dict)
                     print "Done " + str(metaCounter) + " lines written"
                     return
@@ -80,4 +80,4 @@ def writeToFile(the_list, filepath):
 
 path = "/home/dzyan/Dokumenter/enwiki-20170820-pages-articles-multistream.xml"
 tag_id = "{http://www.mediawiki.org/xml/export-0.10/}"
-parseAndWrite(path, tag_id, 500)
+parseAndWrite(path, tag_id, 50)

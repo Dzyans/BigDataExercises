@@ -24,16 +24,34 @@ def match(query, test_data):
     pattern = re.compile(x)
     return pattern.findall(test_data)
 
-def printout_dict():
+def printout_dict(words):
     read_dictionary = np.load('my_file.npy').item()
-    for k, v in read_dictionary.items():
-        print(k, v)
+    print "done loading dict"
+    list_of_lists = []
+    for key in words:
+        list_of_lists.append(read_dictionary[key])
+
+    print list_of_lists
+    if len(list_of_lists) == 1:
+        return list_of_lists
+
+    curset = set(list_of_lists[0])
+
+    for d in list_of_lists:
+        curset = set(d).intersection(curset)
+
+    print curset
+    #for k, v in read_dictionary.items():
+     #   print(k, v)
 
 
 #test = "i have a really nice cat in hat at home"
 #pattern = ["cat", [2,4], "hat"]
-pattern = ["when", [15,25],"republic",[15,25],"along"]
+#pattern = ["when", [15,25],"republic",[15,25],"along"]
 
-printout_dict()
+pattern = ["when", [15,25],"republic"]
+
+
+#print (printout_dict(["when","republic"]))
 #print match(pattern, test)
-#lookup(pattern)
+lookup(pattern)
