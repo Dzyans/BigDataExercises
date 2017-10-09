@@ -7,6 +7,7 @@ def parseAndWrite(path, id_tag, files_size):
     metaCounter = 0
     total = 0
     string_list = []
+
     ##"{http://www.mediawiki.org/xml/export-0.10/}"
     #with open("/home/dzyan/Dokumenter/enwiki-20170820-pages-articles-multistream.xml") as xml:
     proceed = False
