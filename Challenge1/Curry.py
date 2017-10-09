@@ -56,35 +56,44 @@ def load_dicts():
     dict_list = list()
     for filename in os.listdir("Meta"):
         # print filename
-        dict_list.append(np.load('Meta/' + filename).item())
+        new_dict = np.load('Meta/' + filename).item()
+        print "loaded dict " + filename
+        print len(new_dict)
+        dict_list.append(new_dict)
 
     return dict_list
 
 def GetList(words, dict_list):
 
             ##dict_list.add(np.load('Meta/my_file1.npy').item())
-        print "done loading dict"
-        print len(dict_list)
-        cur_list_of_list = []
+    print "done loading dict"
+    print len(dict_list)
+    cur_list_of_list = []
+    ll = []
+    curList = []
+    for MetaDict in dict_list:
+        print "next dict"
+        curList = list()
         ll = []
-        curList = []
-        for MetaDict in dict_list:
-            print "next dict"
-            for key in words:
-                if key in MetaDict:
-                    print "word found in "
-                    print MetaDict[key]
-                    ll.append(MetaDict[key])
+        for key in words:
+            if key in MetaDict:
+                print "word found in "
+                print MetaDict[key]
+                ll.append(MetaDict[key])
+        if(len(ll) > 0):
             curList = set(ll[0])
             for hej in range(1, len(ll)):
                 curList = set(curList).intersection(set(ll[hej]))
-
+            print "common values found"
+            print curList
             cur_list_of_list.append(list(curList))
             curList = []
 
         print "hej"
-        print len(cur_list_of_list)
-        print(cur_list_of_list)
+        #print len(cur_list_of_list)
+        #print(cur_list_of_list)
+
+    return cur_list_of_list
 
 
 #test = "i have a really nice cat in hat at home"
