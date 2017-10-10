@@ -31,11 +31,11 @@ def CreateDict(dict_size):
             #print str(len(cock_block_set)) + " words in set"
        if(file_counter > 0 and file_counter%dict_size == 0): ##time to save
             print "saving dict"
-            np.save('MetaB/BDict' + str(file_counter/dict_size) + '.npy',the_dict)
+            np.save('MetaB2/BDict' + str(file_counter/dict_size) + '.npy',the_dict)
             the_dict = dict()
 
     print "saving last dict"
-    np.save('MetaB/BDict' + str(file_counter / dict_size) + '.npy', the_dict)
+    np.save('MetaB2/BDict' + str(file_counter / dict_size) + '.npy', the_dict)
 
 
-CreateDict(1000)
+CreateDict(6000)

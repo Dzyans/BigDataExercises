@@ -21,7 +21,10 @@ def parseAndWrite(path, id_tag, files_size):
                 justsaved = False
                 for a in elem:
                     if a.tag == id_tag+"title":
-                        #if a.text[0] == 'A' or a.text[0] == 'a':
+                        if a.text == 'Cat' or a.text[0] == 'a':
+                            text = cleanText(b.text)
+                            string_list.append(text)
+                            writeToFile(string_list, "B/part" + str(metaCounter / files_size))
                          #   proceed = True
                         #else:
                          #   skipcounter = skipcounter +1
@@ -69,6 +72,45 @@ def parseAndWrite(path, id_tag, files_size):
     #np.save('Meta/my_file' + str((metaCounter / (files_size * 200))+1) + '.npy', lookup_dict)
     print "done"
 
+
+def GetCats(path, id_tag, files_size):
+    lookup_dict = {}
+    counter = 0
+    metaCounter = 0
+    total = 0
+    string_list = []
+
+    ##"{http://www.mediawiki.org/xml/export-0.10/}"
+    #with open("/home/dzyan/Dokumenter/enwiki-20170820-pages-articles-multistream.xml") as xml:
+    proceed = False
+    skipcounter = 0
+    current_title = "A"
+    with open(path) as xml:
+        for event, elem in letree.iterparse(xml, events=('start', 'end')):
+            if event == "end" and elem.tag == id_tag+"page":
+                total = total +1
+                proceed = False
+                justsaved = False
+                for a in elem:
+                    if a.tag == id_tag+"title":
+                        if a.text == 'Cat':
+                            proceed =True
+                        else:
+                            a.clear()
+                            break
+                    if a.tag == id_tag + "revision" and proceed:
+                        # print the_title
+                        for b in a:
+                            if b.tag == id_tag + "text":
+                                if type(b.text) is str:
+                                    text = cleanText(b.text)
+                                    string_list.append(text)
+                                    writeToFile(string_list, "B/partCat")
+                                    return
+                 #   proceed = True
+
+                elem.clear()
+    print "done"
 
 def basic_count(path, id_tag, files_size):
     total = 0
@@ -122,4 +164,5 @@ def writeToFile(the_list, filepath):
 path = "/home/dzyan/Dokumenter/enwiki-20170820-pages-articles-multistream.xml"
 tag_id = "{http://www.mediawiki.org/xml/export-0.10/}"
 #basic_count(path,tag_id,200)
-parseAndWrite(path, tag_id, 400)
+#parseAndWrite(path, tag_id, 400)
+GetCats(path, tag_id, 400)

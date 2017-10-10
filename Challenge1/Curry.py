@@ -6,13 +6,13 @@ def lookup(pattern, lookup_list):
     hit = 0
     #print len(lookup_list)
     counter = 0
-    for filename in os.listdir("B"):
+    for filename in os.listdir("A"):
         filenum = int(filename[4:])
 
         #print filenum
         if(filenum) in lookup_list:
             #print filename
-            with open("B/"+filename, 'r') as searchfile:
+            with open("A/"+filename, 'r') as searchfile:
                 for line in searchfile:
                     result = match(pattern, line)
                     if len(result) > 0:
@@ -23,9 +23,9 @@ def simple_lookup(pattern):
     print "doing simple"
     counter = 0
     file_counter = 0
-    for filename in os.listdir("B"):
+    for filename in os.listdir("A"):
        file_counter = file_counter +1
-       with open("B/"+filename, 'r') as searchfile:
+       with open("A/"+filename, 'r') as searchfile:
             for line in searchfile:
                 result = match(pattern, line)
                 if len(result) > 0:
@@ -76,41 +76,38 @@ def printout_dict(words):
      #   print(k, v)
 def load_dicts():
     dict_list = list()
-    for filename in os.listdir("MetaB"):
+    for filename in os.listdir("MetaA"):
         # print filename
-        new_dict = np.load('MetaB/' + filename).item()
+        new_dict = np.load('MetaA/' + filename).item()
         print "loaded dict " + filename
         print len(new_dict)
         dict_list.append(new_dict)
 
     return dict_list
 
-def GetList(words, dict_list):
+def GetList(words):
     #print len(dict_list)
     cur_list_of_list = []
     ll = []
     curList = []
-    for MetaDict in dict_list:
+    for filename in os.listdir("MetaA"):
+        print "NEXT"
+        MetaDict = np.load('MetaA/' + filename).item()
+
         #print "next dict"
-        curList = list()
+        #curList = list()
         ll = []
         for key in words:
             if key in MetaDict:
-     #           print "word found in "
-      #          print MetaDict[key]
                 ll.append(MetaDict[key])
         if(len(ll) > 0):
             curList = set(ll[0])
             for hej in range(1, len(ll)):
                 curList = set(curList).intersection(set(ll[hej]))
-       #     print "common values found"
-        #    print curList
+        #   print "common values found"
+        #   print curList
             cur_list_of_list = cur_list_of_list + list(curList)
             curList = []
-
-        #print "hej"
-        #print len(cur_list_of_list)
-        #print(cur_list_of_list)
 
     return cur_list_of_list
 
@@ -119,16 +116,19 @@ def GetList(words, dict_list):
 #pattern = ["cat", [2,4], "hat"]
 #pattern = ["when", [15,25],"republic",[15,25],"along"]
 
-pattern = ["cats",[0,10], "are", [0,10], "to"]
+#pattern = ["cats",[0,10], "are", [0,10], "to"]
 #pattern = ["or",[0,10], "or", [0,10], "or"]
-start_time = time.time()
-dicts = load_dicts()
-print("---dicts loaded in %s seconds ---" % (time.time() - start_time))
+pattern = ["when",[15,25], "republic", [15,25], "along"]
 
-start_time = time.time()
-#hh = GetList(["or"], dicts)
-hh = GetList(["cats","are","to"], dicts)
+#start_time = time.time()
+#dicts = load_dicts()
+#print("---dicts loaded in %s seconds ---" % (time.time() - start_time))
 
+
+#hh = GetList(["or"])
+#hh = GetList(["cats","are","to"])
+hh = GetList(["when","republic","along"])
+start_time = time.time()
 lookup(pattern, hh)
 
 print("--- %s seconds ---" % (time.time() - start_time))
