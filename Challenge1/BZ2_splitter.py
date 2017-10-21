@@ -10,7 +10,7 @@ def split_xml(filename):
         os.mkdir("chunks")
     # Counters
     pagecount = 0
-    filecount = 1
+        filecount = 1
     #open chunkfile in write mode
     chunkname = lambda filecount: os.path.join("chunks","chunk-"+str(filecount)+".xml.bz2")
     chunkfile = bz2.BZ2File(chunkname(filecount), 'w')
