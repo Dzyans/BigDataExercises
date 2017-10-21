@@ -56,9 +56,28 @@ def db_shell():
             buffer = ""
 
     con.close()
+##first
+# Select * from (Select OrderID, CustomerID From Orders) OO INNER JOIN (Select * from (select * from 'Order Details' where OrderID IN(Select OrderID from Orders where OrderID in (Select OrderId from (Select OrderID from 'Order Details' where OrderID in (Select OrderID from Orders where CustomerID = 'ALFKI'))))) OD INNER JOIN (select ProductName, ProductID from Products) P on OD.ProductID = P.ProductID) ODD on OO.OrderID = ODD.OrderID;
 
-    #SELECT * FROM Products WHERE ProductID in (SELECT ProductID FROM Orders Where CustomerID = 'ALFKI'); this gets all the products in the orders of ALFKI
+
+    #SELECT ProductID, ProductName FROM Products WHERE ProductID in (SELECT ProductID FROM Orders Where CustomerID = 'ALFKI'); this gets all the products in the orders of ALFKI;
 #SELECT * FROM Orders WHERE CustomerID in (SELECT CustomerID FROM Customers WHERE CompanyName = 'ALFKI');
+# Select * from 'Order Details' where OrderID in (Select OrderID from Orders where CustomerID = 'ALFKI');
+
+## SELECT OrderID, Count(OrderID) from (Select OrderID, ProductID from 'Order Details' where OrderID in (Select OrderID from Orders where CustomerID = 'ALFKI') group by OrderID);
+## Select OrderID, Count(OrderID) from 'Order Details' where OrderID in (Select OrderID from Orders where CustomerID = 'ALFKI') group by OrderID;
+#Select OrderID, OrderDate from Orders where OrderID in (Select OrderId from (Select OrderID, Count(OrderID) as oc from 'Order Details' where OrderID in (Select OrderID from Orders where CustomerID = 'ALFKI') group by OrderID) where oc > 1);
+##Select * from (select * from 'Order Details' where OrderID = 10408) OD INNER JOIN (select * from Products) P on OD.ProductID = P.ProductID;
+#Select OrderID from Orders where OrderID in (Select OrderId from (Select OrderID, Count(OrderID) as oc from 'Order Details' where OrderID in (Select OrderID from Orders where CustomerID = 'ALFKI') group by OrderID) where oc > 1);
+
+##Select * from (Select * from Orders INNER JOIN (select * from 'Order Details' where OrderID in (Select OrderID from Orders where OrderID in (Select OrderId from (Select OrderID, Count(OrderID) as oc from 'Order Details' where OrderID in (Select OrderID from Orders where CustomerID = 'ALFKI') group by OrderID) where oc > 1))) OD INNER JOIN (select * from Products) P on OD.ProductID = P.ProductID)) OJ on Orders.OrderID = OJ.OrderID);
+
+###CUrrent state
+##Select * from (select * from 'Order Details' where OrderID IN(Select OrderID from Orders where OrderID in (Select OrderId from (Select OrderID, Count(OrderID) as oc from 'Order Details' where OrderID in (Select OrderID from Orders where CustomerID = 'ALFKI') group by OrderID) where oc > 1))) OD INNER JOIN (select * from Products) P on OD.ProductID = P.ProductID;
+##the last one
+##Select * from (Select * From Orders) OO INNER JOIN (Select * from (select * from 'Order Details' where OrderID IN(Select OrderID from Orders where OrderID in (Select OrderId from (Select OrderID, Count(OrderID) as oc from 'Order Details' where OrderID in (Select OrderID from Orders where CustomerID = 'ALFKI') group by OrderID) where oc > 1))) OD INNER JOIN (select * from Products) P on OD.ProductID = P.ProductID) ODD on OO.OrderID = ODD.OrderID;
+## trimmed a bit
+## ##Select * from (Select OrderID, CustomerID From Orders) OO INNER JOIN (Select * from (select OrderID, ProductID, Quantity from 'Order Details' where OrderID IN(Select OrderID from Orders where OrderID in (Select OrderId from (Select OrderID, Count(OrderID) as oc from 'Order Details' where OrderID in (Select OrderID from Orders where CustomerID = 'ALFKI') group by OrderID) where oc > 1))) OD INNER JOIN (select ProductID, ProductName from Products) P on OD.ProductID = P.ProductID) ODD on OO.OrderID = ODD.OrderID;
 GO()
 
 db_shell()
