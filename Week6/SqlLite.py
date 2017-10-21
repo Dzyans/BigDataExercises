@@ -58,7 +58,7 @@ def db_shell():
     con.close()
 
     #SELECT * FROM Products WHERE ProductID in (SELECT ProductID FROM Orders Where CustomerID = 'ALFKI'); this gets all the products in the orders of ALFKI
-#SELECT * FROM Orders WHERE CustomerID in (SELECT CustomerID FROM Customers WHERE CompanyNname = 'ALFKI');
+#SELECT * FROM Orders WHERE CustomerID in (SELECT CustomerID FROM Customers WHERE CompanyName = 'ALFKI');
 GO()
 
 db_shell()
