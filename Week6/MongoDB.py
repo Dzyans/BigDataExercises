@@ -32,7 +32,15 @@ pprint.pprint(list(db.orders.aggregate([
                      'as': 'product_details'
          }},
         {'$unwind': '$product_details'},
-        {'$match' : { 'CustomerID' : 'ALFKI' }}      
+        # define some conditions here 
+        {'$match' : { 'CustomerID' : 'ALFKI' }},
+        #define which fields are you want to fetch
+        {'$project':{
+            'CustomerID': 1,
+            'OrderID' : '$order_details.OrderID',
+            'ProductID': '$product_details.ProductID',
+            'ProductName': '$product_details.ProductName'
+        }}
     ])
 ))
 
