@@ -116,20 +116,3 @@ pprint.pprint(list(db.products.aggregate([
 ])
 ), logFile)            
 logFile.close()
-
-#Create VIEW totals AS
-#Select * FROM
-#  (SELECT ProductName,
-#          ProductID
-#   FROM Products) PRODS
-#INNER JOIN
-#  (SELECT ProductID,
-#          Sum(Quantity) AS Total
-#   FROM 'Order Details'
-#   WHERE OrderID IN
-#       (SELECT OrderID
-#        FROM Orders
-#        WHERE CustomerID = 'ALFKI')
-#   GROUP BY ProductID) COUNTS ON PRODS.ProductID = Counts.ProductID;
-#   
-#   select ProductName, ProductID, Total from totals;
