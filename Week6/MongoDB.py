@@ -50,8 +50,8 @@ logFile.close()
 
 # Exercise 2
 logFile=open('Exercise_2'+'.txt', 'w')
-pprint.pprint(list(db.orders.aggregate([
-#db.orders.aggregate([
+#pprint.pprint(list(db.orders.aggregate([
+db.orders.aggregate([
         {'$lookup': {
         'from': 'order-details', 
         'localField': 'OrderID', 
@@ -83,7 +83,50 @@ pprint.pprint(list(db.orders.aggregate([
             }}
         
     ])
-), logFile)            
+#), logFile)            
+logFile=open('Exercise_3'+'.txt', 'w')
 
 # Exercise 3
-    
+pprint.pprint(list(db.products.aggregate([
+        {'$lookup': {
+        'from': 'order-details', 
+        'localField': 'ProductID', 
+        'foreignField': 'ProductID', 
+        'as': 'order_details'
+    }},
+    {'$lookup': {
+        'from': 'orders', 
+        'localField': 'order_details.OrderID', 
+        'foreignField': 'OrderID', 
+        'as': 'orders'
+    }},
+    {'$match' : { 'orders.CustomerID' : 'ALFKI' }},
+        {'$project':{
+        'ProductID': 1,
+        'ProductName': 1,
+        'total' : {'$sum' : '$order_details.Quantity'},
+        }},
+        {'$group' : {
+            '_id' : {'ProductID' : "$ProductID"},
+            'details': { '$push': '$$ROOT'},
+            'count' : { '$sum' : 1 },
+            }}
+])
+), logFile)            
+
+#Create VIEW totals AS
+#Select * FROM
+#  (SELECT ProductName,
+#          ProductID
+#   FROM Products) PRODS
+#INNER JOIN
+#  (SELECT ProductID,
+#          Sum(Quantity) AS Total
+#   FROM 'Order Details'
+#   WHERE OrderID IN
+#       (SELECT OrderID
+#        FROM Orders
+#        WHERE CustomerID = 'ALFKI')
+#   GROUP BY ProductID) COUNTS ON PRODS.ProductID = Counts.ProductID;
+#   
+#   select ProductName, ProductID, Total from totals;
