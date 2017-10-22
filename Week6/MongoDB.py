@@ -23,8 +23,7 @@ pprint.pprint(list(db.orders.aggregate([
         'localField': 'OrderID', 
         'foreignField': 'OrderID', 
         'as': 'order_details'
-            }
-        },
+            }},
         {'$lookup': {'from' : 'products',
              'localField': "order_details.ProductID",
              'foreignField':'ProductID',
@@ -37,10 +36,13 @@ pprint.pprint(list(db.orders.aggregate([
         {'$project':{
             'CustomerID': 1,
             'OrderID': 1,
-            'order_details' : '$order_details',
-            'product_details' : '$product_details'
+            'order_details' : '$order_details.ProductID',
+            'product_details' : '$product_details.ProductName'
         }},
-        {'$group' : {'_id' : "$OrderID", 'details': { '$push': '$$ROOT'}}}
+        {'$group' : {
+            '_id' : {'OrderID' : "$OrderID"},
+            'details': { '$push': '$$ROOT'},
+            'count' : { '$sum' : 1 }}}
     ])
 ), logFile)
 
