@@ -15,9 +15,9 @@ import pprint
 
 # Exercise 1
 #db.orders.aggregate([
-logFile=open('mylogfile'+'.txt', 'w')
-#pprint.pprint(list(db.orders.aggregate([
-db.orders.aggregate([
+logFile=open('Exercise1'+'.txt', 'w')
+pprint.pprint(list(db.orders.aggregate([
+#db.orders.aggregate([
         {'$lookup': {
         'from': 'order-details', 
         'localField': 'OrderID', 
@@ -44,14 +44,14 @@ db.orders.aggregate([
             'details': { '$push': '$$ROOT'},
             'count' : { '$sum' : 1 }}}
     ])
-#), logFile)
+), logFile)
 
 logFile.close()
 
 # Exercise 2
 logFile=open('Exercise_2'+'.txt', 'w')
-#pprint.pprint(list(db.orders.aggregate([
-db.orders.aggregate([
+pprint.pprint(list(db.orders.aggregate([
+#db.orders.aggregate([
         {'$lookup': {
         'from': 'order-details', 
         'localField': 'OrderID', 
@@ -83,7 +83,9 @@ db.orders.aggregate([
             }}
         
     ])
-#), logFile)            
+), logFile)            
+logFile.close()
+
 logFile=open('Exercise_3'+'.txt', 'w')
 
 # Exercise 3
@@ -113,6 +115,7 @@ pprint.pprint(list(db.products.aggregate([
             }}
 ])
 ), logFile)            
+logFile.close()
 
 #Create VIEW totals AS
 #Select * FROM

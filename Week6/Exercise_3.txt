@@ -96,4 +96,15 @@
                 u'total': 2992},
                {u'ProductID': 59,
                 u'ProductName': u'Raclette Courdavault',
-                u'_id': 
+                u'_id': ObjectId('59eb402cfcf991efc68e348c'),
+                u'total': 2992}]},
+ {u'_id': {u'ProductID': 3},
+  u'count': 2,
+  u'details': [{u'ProductID': 3,
+                u'ProductName': u'Aniseed Syrup',
+                u'_id': ObjectId('59eb375afcf991efc68e192f'),
+                u'total': 656},
+               {u'ProductID': 3,
+                u'ProductName': u'Aniseed Syrup',
+                u'_id': ObjectId('59eb402cfcf991efc68e3457'),
+                u'total': 656}]}]
