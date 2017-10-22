@@ -13,9 +13,9 @@ db = client['Northwind']
 
 import pprint
 
-#pprint.pprint(list(db.orders.aggregate([
-#        {'$match' : { 'CustomerID' : 'ALFKI' }}])
-#))
+# Exercise 1
+#db.orders.aggregate([
+logFile=open('mylogfile'+'.txt', 'w')
 
 pprint.pprint(list(db.orders.aggregate([
         {'$lookup': {
@@ -25,43 +25,26 @@ pprint.pprint(list(db.orders.aggregate([
         'as': 'order_details'
             }
         },
-        {'$unwind': '$order_details'},
         {'$lookup': {'from' : 'products',
-                     'localField': "ProductID",
-                     'foreignField': 'order_details.ProductID',
-                     'as': 'product_details'
+             'localField': "order_details.ProductID",
+             'foreignField':'ProductID',
+             'as': 'product_details'
          }},
-        {'$unwind': '$product_details'},
+        {'$unwind': '$order_details'},
         # define some conditions here 
         {'$match' : { 'CustomerID' : 'ALFKI' }},
         #define which fields are you want to fetch
         {'$project':{
             'CustomerID': 1,
-            'OrderID' : '$order_details.OrderID',
-            'ProductID': '$product_details.ProductID',
-            'ProductName': '$product_details.ProductName'
-        }}
+            'OrderID': 1,
+            'order_details' : '$order_details',
+            'product_details' : '$product_details'
+        }},
+        {'$group' : {'_id' : "$OrderID", 'details': { '$push': '$$ROOT'}}}
     ])
-))
-
-#Exercise 1
-orders  = db.orders
-#order_details = db["order-details"]
-#products = db.products
-#customers = db.customers
+), logFile)
 
 
-#for order in orders.find({ "CustomerID" : "ALFKI" }):
-#    print order.order_details
-#    for detail in order_details.find({"OrderID" : order["OrderID"]}):
-#        print detail["ProductID"]
-#        for product in products.find({"ProductID" : detail["ProductID"]}):
-#            product["ProductName"]
-
-
+logFile.close()
 # Exercise 2
             
-#for order in orders.find({ "CustomerID" : "ALFKI" }):
-    #print order["OrderID"]
- #   for detail in order_details.find({"OrderID" : order["OrderID"]}):
-#        detail
