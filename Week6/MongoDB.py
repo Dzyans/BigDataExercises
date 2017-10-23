@@ -29,7 +29,6 @@ pprint.pprint(list(db.orders.aggregate([
              'foreignField':'ProductID',
              'as': 'product_details'
          }},
-        {'$unwind': '$order_details'},
         # define some conditions here 
         {'$match' : { 'CustomerID' : 'ALFKI' }},
         #define which fields are you want to fetch
@@ -58,31 +57,28 @@ pprint.pprint(list(db.orders.aggregate([
         'foreignField': 'OrderID', 
         'as': 'order_details'
             }},
-        {'$match': {"order_details":{'$ne':[]}}},
+        #{'$match': {"order_details":{'$ne':[]}}},
         {'$lookup': {'from' : 'products',
              'localField': "order_details.ProductID",
              'foreignField':'ProductID',
              'as': 'product_details'
          }},
-        {'$match': {"product_details":{'$ne':[]}}},
+        #{'$match': {"product_details":{'$ne':[]}}},
 
-        {'$unwind': '$order_details'},
         # define some conditions here 
         {'$match' : { 'CustomerID' : 'ALFKI' }},
         #define which fields are you want to fetch
         {'$project':{
+            'size_of_products': {'$size': "$product_details"},
             'CustomerID': 1,
             'OrderID': 1,
             'order_details' : '$order_details',
-            'product_details' : '$product_details' ,
-            'size_of_products': {'$size': "$product_details"}
-
+            'product_details' : '$product_details' 
         }},
         {'$match': {"size_of_products": {'$gt': 1}}},
         {'$group' : {
             '_id' : {'OrderID' : "$OrderID"},
             'details': { '$push': '$$ROOT'},
-            'count' : { '$sum' : 1 }
             }}
         
     ])
