@@ -58,11 +58,14 @@ pprint.pprint(list(db.orders.aggregate([
         'foreignField': 'OrderID', 
         'as': 'order_details'
             }},
+        {'$match': {"order_details":{'$ne':[]}}},
         {'$lookup': {'from' : 'products',
              'localField': "order_details.ProductID",
              'foreignField':'ProductID',
              'as': 'product_details'
          }},
+        {'$match': {"product_details":{'$ne':[]}}},
+
         {'$unwind': '$order_details'},
         # define some conditions here 
         {'$match' : { 'CustomerID' : 'ALFKI' }},
