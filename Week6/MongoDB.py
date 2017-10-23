@@ -89,28 +89,35 @@ logFile=open('Exercise_3'+'.txt', 'w')
 
 # Exercise 3
 pprint.pprint(list(db.products.aggregate([
-        {'$lookup': {
+    {'$lookup': {
         'from': 'order-details', 
         'localField': 'ProductID', 
         'foreignField': 'ProductID', 
         'as': 'order_details'
     }},
+    {'$unwind': '$order_details'},
+    {'$match': {"order_details":{'$ne':[]}}},
+    
     {'$lookup': {
         'from': 'orders', 
         'localField': 'order_details.OrderID', 
         'foreignField': 'OrderID', 
         'as': 'orders'
     }},
+    {'$unwind': '$orders'},
+    {'$match': {"orders":{'$ne':[]}}},
     {'$match' : { 'orders.CustomerID' : 'ALFKI' }},
+
         {'$project':{
         'ProductID': 1,
         'ProductName': 1,
+        'CustomerID': '$orders.CustomerID',
+        'orders' : '$orders',
         'total' : {'$sum' : '$order_details.Quantity'},
         }},
         {'$group' : {
             '_id' : {'ProductID' : "$ProductID"},
             'details': { '$push': '$$ROOT'},
-            'count' : { '$sum' : 1 },
             }}
 ])
 ), logFile)            
