@@ -1,0 +1,31 @@
+SELECT *
+FROM
+  (SELECT OrderID,
+          CustomerID
+   FROM Orders) OO
+INNER JOIN
+  (SELECT *
+   FROM
+     (SELECT OrderID,
+             ProductID,
+             Quantity
+      FROM 'Order Details'
+      WHERE OrderID IN
+          (SELECT OrderID
+           FROM Orders
+           WHERE OrderID IN
+               (SELECT OrderId
+                FROM
+                  (SELECT OrderID,
+                          Count(OrderID) AS oc
+                   FROM 'Order Details'
+                   WHERE OrderID IN
+                       (SELECT OrderID
+                        FROM Orders
+                        WHERE CustomerID = 'ALFKI')
+                   GROUP BY OrderID)
+                WHERE oc > 1))) OD
+   INNER JOIN
+     (SELECT ProductID,
+             ProductName
+      FROM Products) P ON OD.ProductID = P.ProductID) ODD ON OO.OrderID = ODD.OrderID;
