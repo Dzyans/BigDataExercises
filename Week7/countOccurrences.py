@@ -5,9 +5,8 @@
 #each token.
 """
 def Map(L):
- 
   results = []
-  for w in L:
+  for w in L:   
     # True if w contains non-alphanumeric characters
     if not w.isalnum():
         print "something is wrong"
