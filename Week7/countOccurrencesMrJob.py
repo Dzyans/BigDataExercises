@@ -43,9 +43,11 @@ class OccurencesCount(MRJob):
                        mapper_final=self.final_get_words,
                        combiner=self.sum_words,
                        reducer=self.sum_words)]
-    
+
 if __name__ == '__main__':
     if (len(sys.argv) != 2):
         print "Program requires path to file for reading!"
         sys.exit(1)
     OccurencesCount.run()
+
+#/home/dzyan/PycharmProjects/BigDataExercises/Challenge1/A/part1
