@@ -1,16 +1,10 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Oct 27 15:07:42 2017
-
-@author: s123725
-"""
 import sys
 from mrjob.job import MRJob
 from mrjob.step import MRStep
 import re
 
 WORD_RE = re.compile(r"[\w']+")
-
 class OccurencesCount(MRJob):
     def steps(self):
         return [MRStep(mapper_init=self.init_get_words,

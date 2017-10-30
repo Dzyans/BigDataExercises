@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Oct 27 16:29:59 2017
-
-@author: s123725
-"""
 
 import sys
 from mrjob.job import MRJob
@@ -19,8 +14,9 @@ class eulerGraphs(MRJob):
                        mapper=self.get_edges,
                        mapper_final=self.final_get_edges,
                        combiner=self.sum_edges,
-                       reducer=self.even_edges,
+                       reducer=self.even_edges
                        )]
+    
     
     def splitFile(self):
         self.edges = {}
@@ -39,6 +35,6 @@ class eulerGraphs(MRJob):
     
     def even_edges(self, edge, counts):
         yield edge, sum(counts) % 2 == 0    
-    
+        
 if __name__ == '__main__':
     eulerGraphs.run()
