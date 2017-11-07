@@ -143,11 +143,12 @@ def db_shell():
                 cur.execute(buffer)
 
                 if buffer.lstrip().upper().startswith("SELECT"):
-                    values = cur.fetchall()
+                    #values = cur.fetchall()
                     names = list(map(lambda x: x[0], cur.description))
                     print (names)
-                    for val in values:
-                        print (val)
+                    for row in cur:
+                    #for val in values:
+                        print (row)
             except sqlite3.Error as e:
                 print ("An error occurred:", e.args[0])
             buffer = ""
@@ -172,3 +173,6 @@ GO()
 #get_vocabularySet("t5_2qh1i")
 #get_vocabs("select * from comments where subreddit_id = 't5_2r0gj' limit 3;", True)
 db_shell()
+
+#select subreddit_id from comments where author_id in(select author_id from comments where subreddit_id = 't5_247i');
+#select count(distinct subreddit_id) from comments where author_id in(select author_id from comments where subreddit_id = 't5_247i');
