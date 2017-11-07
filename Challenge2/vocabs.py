@@ -28,35 +28,6 @@ def GO():
 
     conn.close()
 
-def get_stuff(statement, verbose = False):
-    con = sqlite3.connect('reddit.db')
-    con.text_factory = str ## this is done to decode the shit strings in the database
-    con.isolation_level = None
-    cur = con.cursor()
-    
-    if sqlite3.complete_statement(statement):
-            print (statement)
-            try:
-                statement = statement.strip()
-                cur.execute(statement)
-                print ("done executing")
-                
-                ##if it was a select statement, wil will now iterate the result
-                if statement.lstrip().upper().startswith("SELECT"):
-                    values = cur.fetchone()
-                    print(str(len(values)) + " entries returned")
-                    if(verbose and len(values) > 0):
-                        names = list(map(lambda x: x[0], cur.description))
-                        print (names)
-                        for val in values:
-                            print (val[0])
-                    
-                 
-            except sqlite3.Error as e:
-                print ("An error occurred:", e.args[0])
-            
-    con.close()
-
 def add_words_to_set(the_set, the_string, verbose = False):
     word_count = 0
     symbols = ['\n','`','~','!','@','#','$','%','^','&','*','(',')','_','-','+','=','{','[',']','}','|','\\',':',';','"',"'",'<','>','.','?','/',',']
@@ -188,15 +159,16 @@ def with_sorted(the_dict):
 GO()
 #get_stuff("select * from comments;")
 #get_vocab()
-vocabs = get_vocabs()
 
-svocabs = with_sorted(vocabs)
+#vocabs = get_vocabs()
 
-for k in svocabs:
-    print (k)
+#svocabs = with_sorted(vocabs)
+
+#for k in svocabs:
+#    print (k)
     
 
 
 #get_vocabularySet("t5_2qh1i")
 #get_vocabs("select * from comments where subreddit_id = 't5_2r0gj' limit 3;", True)
-#db_shell()
+db_shell()
