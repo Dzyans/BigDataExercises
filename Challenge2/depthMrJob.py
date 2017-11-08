@@ -15,32 +15,25 @@ import re
 WORD_RE = re.compile(r"[\w']+")
 
 
-class eulerGraphs(MRJob):
+class Graphs(MRJob):
     def steps(self):
-        return [MRStep(mapper_init=self.splitFile,
-                       mapper=self.get_edges,
-                       mapper_final=self.final_get_edges,
-                       )]
+        return [MRStep( 
+                mapper=self.get_vertex,
+                combiner=self.combine_vertices
+            )]
     
+    def get_vertex(self, key, line):
+        vertex, parent = line.split()
+        yield (vertex , parent)
     
-    def splitFile(self):
-        self.nodes = {}
+    def combine_vertices(self,vertices,parents):
+        yield (vertices, list(parents))
         
-    def get_edges(self, _, line):
-        for node in WORD_RE.findall(line):
-            
-            self.nodes.setdefault(node, {})
-            self.nodes[node] = self.nodes[node]     
-
-    def final_get_edges(self):
-        for node, val in self.nodes.iteritems():
-            yield node, val
-
-    def sum_edges(self, edge, counts):
-        yield edge, sum(counts)    
+    def reduce_vertices(self, vertex, parent):
+        yield (vertex, parent.extend(parent))   
     
     def even_edges(self, edge, counts):
         yield edge, sum(counts) % 2 == 0    
         
 if __name__ == '__main__':
-    eulerGraphs.run()
+    Graphs.run()
