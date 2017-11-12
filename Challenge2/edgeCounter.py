@@ -7,7 +7,7 @@ Created on Sun Nov 12 12:17:41 2017
 from mrjob.job import MRJob
 from mrjob.step import MRStep
 import sys
-
+import timeit
 import heapq as minq
 
 
@@ -15,12 +15,6 @@ class edgeCount(MRJob):
   heap = list()
   def steps(self):
        return [MRStep(mapper=self.mapper, combiner=self.combine_edge_weight, reducer = self.reducer_vertex_weight)]
-  
-  #### FIRST JOB ####
-  def init(self):
-        self.final_counter = 0
-        self.heap = [(0, "")] * 10
-        minq.heapify(self.heap)
   
   def mapper(self, _, line):
         line.strip()    
@@ -48,73 +42,26 @@ class edgeCount(MRJob):
  
     
   def reducer_vertex_weight(self, vertex, weights):
-      #print("calling reducer " + vertex)
-      #w = sum(weights)
-      #if w > 2 and self.heap[0][0] < w:
-       # minq.heappop(self.heap)
-       # minq.heappush(self.heap, (w, vertex))
-        #yield (vertex, w)
-     
-      #yield (vertex, sum(weights))
-      
-      #print("calling reducer " + vertex)
       w = sum(weights)
       
-      for i in range(len(heap)):
-          print(heap[i][1])
-          if heap[i][1] == vertex:
-              print("already in the heap")
+      #for i in range(len(heap)):
+          #print(heap[i][1])
+          #if heap[i][1] == vertex:
+              #print("already in the heap")
       
       if w > 2 and heap[0][0] < w:
         minq.heappop(heap)
         minq.heappush(heap, (w, vertex))
-        #yield (vertex, w)
-     
-      #yield (vertex, sum(weights))
-      
-  def final(self):  
-      for i in range(len(heap)):
-          print(minq.heappop(heap)) 
-                 
-  #def reducer_find_max_common_authors(self, _, word_count_pairs):
-   #   yield (_, sum(word_count_pairs)
-      #print(word_count_pairs) 
-      #if self.heap[0] < word_count_pairs:
-        #  self.heap.pop()
-        #  self.heap.push(self.heap, word_count_pairs)
-        #  yield (word_count_pairs)
-        # each item of word_count_pairs is (count, word),
-        # so yielding one results in key=counts, value=word
-        
-
-  #def reduce_to_max(self, _, weight_pairs):
-       
-     # yield (weight_pairs, "")
-      
-    
-    #def top_10_mapper(self, vertex, vertex_weight):
-           
-        ##check if weight is below current lowest top 10
-     #   if vertex_weight > self.heap[0]:
-      #      yield (vertex, vertex_weight)
-       
-  #def top_10_reducer(self, vertex, vertex_weight):
-      
-   #   self.heap.push(self.heap, vertex_weight)
-        # check if any of the vertices have uneven degrees.
-
-  #def final(self, _, heap):
-   #   for val in self.heap:          
-    #      yield self.heap.pop()
       
 if __name__ == '__main__':
-    print ("init reducer")
-    final_counter = 0
+    print ("Setting up variables and initiating timer")
+    start_time = timeit.default_timer()
     heap = [(0, ("",""))] * 10
     minq.heapify(heap)
     
     edgeCount.run()
     for i in range(len(heap)):
           print(minq.heappop(heap))
-    sys.exit("Done parsing")
+    elapsed = timeit.default_timer() - start_time
+    sys.exit("Done parsing in " + str(elapsed) + " seconds")
       
