@@ -23,7 +23,7 @@ class Graphs(MRJob):
                 ), MRStep(
                 mapper=self.map_graph,
                 reducer= self.reducer_graph
-                ),MRStep(
+                ), MRStep(
                 mapper=self.map_graph,
                 reducer= self.reducer_graph
                 )]
@@ -53,7 +53,7 @@ class Graphs(MRJob):
         self.distance = line[1]
         self.visited = line[2]
         #print self.nodeid, self.connections, self.distance, self.visited
-        if('a' in self.nodeid and self.visited != 'Black'):
+        if('t3_' in self.nodeid and self.visited != 'Black'):
             self.visited = 'Gray'
         if(self.visited == 'Gray'):
             for connection in self.connections:
