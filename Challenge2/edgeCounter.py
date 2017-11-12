@@ -14,7 +14,7 @@ import heapq as minq
 class edgeCount(MRJob):
   heap = list()
   def steps(self):
-       return [MRStep(mapper=self.mapper, combiner=self.combine_edge_weight, reducer = self.reducer_vertex_weight)]
+       return [MRStep(mapper=self.mapper,  reducer = self.reducer_vertex_weight)]
   
   def mapper(self, _, line):
         line.strip()    
@@ -34,22 +34,10 @@ class edgeCount(MRJob):
                 yield (vertex, 1)
             counter = counter + 1    
   
-  def combine_edge_weight(self, vertex, counts):
-        # sum occurences (equal to degree) of the vertex
-        #weight = sum(counts)
-        #print("calling combiner " + vertex)
-        yield (vertex, sum(counts))
- 
-    
   def reducer_vertex_weight(self, vertex, weights):
       w = sum(weights)
-      
-      #for i in range(len(heap)):
-          #print(heap[i][1])
-          #if heap[i][1] == vertex:
-              #print("already in the heap")
-      
-      if w > 2 and heap[0][0] < w:
+
+      if heap[0][0] < w:
         minq.heappop(heap)
         minq.heappush(heap, (w, vertex))
       

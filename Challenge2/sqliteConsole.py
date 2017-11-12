@@ -46,13 +46,13 @@ def db_shell():
                     
                     names = list(map(lambda x: x[0], cur.description))
                     print (names)
-                    print (cur.rowcount)
-                    counter = 0
+                    
+                    #counter = 0
                     for row in cur:
-                        counter = counter +1
-                        print(counter)
-                    print (counter)
-                        #print (row)
+                        #counter = counter +1
+                        #(counter)
+                    #print (counter)
+                        print (row)
             except sqlite3.Error as e:
                 print ("An error occurred:", e.args[0])
             buffer = ""
