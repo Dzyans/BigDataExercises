@@ -52,15 +52,16 @@ class Graphs(MRJob):
         self.connections = line[0]
         self.distance = line[1]
         self.visited = line[2]
+        #print self.nodeid, self.connections, self.distance, self.visited
         if('a' in self.nodeid and self.visited != 'Black'):
             self.visited = 'Gray'
         if(self.visited == 'Gray'):
             for connection in self.connections:
                 yield (connection, int(self.distance) +1)
                 yield (connection, 'Gray')
-            print self.nodeid
             self.visited = 'Black'
-            yield (self.nodeid, self.visited)
+        yield (self.nodeid, self.distance)
+        yield (self.nodeid, self.visited)
         yield(self.nodeid,self.connections)
         
     def reducer_graph(self, key, values):
