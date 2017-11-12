@@ -7,60 +7,49 @@ Created on Sun Nov 12 12:17:41 2017
 from mrjob.job import MRJob
 from mrjob.step import MRStep
 import sys
-import numpy as np
+import timeit
 import heapq as minq
 
 
 class edgeCount(MRJob):
-
+  heap = list()
   def steps(self):
-       return [MRStep(mapper_init=self.init, mapper=self.mapper, reducer=self.reducer_vertex_links), MRStep(mapper=self.top_10_mapper, reducer=self.top_10_reducer, reducer_final = self.final)]
-  
-  #### FIRST JOB ####
-  def init(self):
-        top_ten_weights = [0] * 10
-        self.heap = minq.heapify(top_ten_weights)
-        
+       return [MRStep(mapper=self.mapper,  reducer = self.reducer_vertex_weight)]
   
   def mapper(self, _, line):
         line.strip()    
         sbr_ids = line.split()
         #count_sbr_ids = len(sbr_ids)
-        counter = 0
+        counter = 1
         
         for sbr_id in sbr_ids:
             cur_sbr_id = sbr_id
             #for each element in the line, yield the vertex and 1
             for next_sbr_id in sbr_ids[counter:]: 
-                vertex = cur_sbr_id + " " + next_sbr_id
+                if next_sbr_id > cur_sbr_id:
+                    vertex = cur_sbr_id +" "+ next_sbr_id
+                else:
+                    vertex = next_sbr_id +" "+ cur_sbr_id
             
                 yield (vertex, 1)
             counter = counter + 1    
   
-  def reducer_vertex_links(self, vertex, counts):
-        # sum occurences (equal to degree) of the vertex
-        yield (vertex,sum(counts))
-  
-  def top_10_mapper(self, vertex, vertex_weight):
-           
-        ##check if weight is below current lowest top 10
-        if vertex_weight > self.heap[0]:
-            yield (vertex, vertex_weight)
-        
-                
-                
-        
-  def top_10_reducer(self, vertex, vertex_weight):
-      
-      self.heap.push(self.heap, vertex_weight)
-        # check if any of the vertices have uneven degrees.
+  def reducer_vertex_weight(self, vertex, weights):
+      w = sum(weights)
 
-  def final(self, _, heap):
-      for val in self.heap:          
-          yield self.heap.pop()
+      if heap[0][0] < w:
+        minq.heappop(heap)
+        minq.heappush(heap, (w, vertex))
       
 if __name__ == '__main__':
-    edgeCount.run()
+    print ("Setting up variables and initiating timer")
+    start_time = timeit.default_timer()
+    heap = [(0, ("",""))] * 10
+    minq.heapify(heap)
     
-    sys.exit("The graph does hot have an Euler tour")
+    edgeCount.run()
+    for i in range(len(heap)):
+          print(minq.heappop(heap))
+    elapsed = timeit.default_timer() - start_time
+    sys.exit("Done parsing in " + str(elapsed) + " seconds")
       
