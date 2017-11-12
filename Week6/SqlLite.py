@@ -8,7 +8,7 @@ def GO():
     # Get all tables
     c.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;")
 
-    print c.fetchall()
+    print (c.fetchall())
 
     conn.close()
 
@@ -20,8 +20,8 @@ def db_shell():
 
     buffer = ""
 
-    print "Enter your SQL commands to execute in sqlite3."
-    print "Enter a blank line to exit."
+    print ("Enter your SQL commands to execute in sqlite3.")
+    print ("Enter a blank line to exit.")
 
     while True:
         line = raw_input()
@@ -30,7 +30,7 @@ def db_shell():
         buffer += line
         ##print buffer
         if sqlite3.complete_statement(buffer):
-            print buffer
+            print (buffer)
             try:
                 buffer = buffer.strip()
                 cur.execute(buffer)
@@ -38,11 +38,11 @@ def db_shell():
                 if buffer.lstrip().upper().startswith("SELECT"):
                     values = cur.fetchall()
                     names = list(map(lambda x: x[0], cur.description))
-                    print names
+                    print (names)
                     for val in values:
-                        print val
+                        print (val)
             except sqlite3.Error as e:
-                print "An error occurred:", e.args[0]
+                print ("An error occurred:", e.args[0])
             buffer = ""
 
     con.close()

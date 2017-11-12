@@ -5,9 +5,8 @@ Created on Tue Nov  7 13:02:55 2017
 @author: tadah
 """
 import sqlite3
-from collections import OrderedDict
-from operator import itemgetter
-import math
+
+from mrjob.job import MRJob
 import timeit
 
 def get_destinct_author(sbr_id, verbose = False):
@@ -191,14 +190,7 @@ def get_subr_for_author(author_id, limit = "_all"):
                 for row in cur:##with the id, we get the comments for that subreddit                       
                     _id = row[0]                 
                     input_string = str(_id) + " " + input_string
-                    rowCount = rowCount +1
-                    #print (input_string)
-                #if(rowCount > 1):
-                #    writeToFile(input_string+"\n", "common"+limit+".txt")
-                    #get_destinct_author(_id)
-                    
-                
-                    
+                    rowCount = rowCount +1                    
         except sqlite3.Error as e:
             print ("An error occurred:", e.args[0])
             
@@ -215,7 +207,7 @@ def test(rowCount):
 
 #print(test(6))
 
-get_the_list("500000")
+get_the_list("5")
 #Select OrderID, Count(OrderID) as oc from 'Order Details' where OrderID in (Select OrderID from Orders where CustomerID = 'ALFKI') group by OrderID) where oc > 1
 ##get_subr_for_authors("10")
 #do()
