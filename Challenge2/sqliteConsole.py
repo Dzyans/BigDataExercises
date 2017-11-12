@@ -43,16 +43,22 @@ def db_shell():
                 cur.execute(buffer)
 
                 if buffer.lstrip().upper().startswith("SELECT"):
-                    values = cur.fetchall()
+                    
                     names = list(map(lambda x: x[0], cur.description))
                     print (names)
-                    for val in values:
-                        print (val)
+                    print (cur.rowcount)
+                    counter = 0
+                    for row in cur:
+                        counter = counter +1
+                        print(counter)
+                    print (counter)
+                        #print (row)
             except sqlite3.Error as e:
                 print ("An error occurred:", e.args[0])
             buffer = ""
 
     con.close()
-    
+        #Select OrderID, Count(OrderID) as oc from 'Order Details' where OrderID in (Select OrderID from Orders where CustomerID = 'ALFKI') group by OrderID) where oc > 1
+
 GO()
 db_shell()
