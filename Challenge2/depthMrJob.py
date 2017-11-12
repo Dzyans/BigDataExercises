@@ -21,21 +21,11 @@ class Graphs(MRJob):
                 combiner=self.combine_vertices,
                 reducer=self.reduce_vertices
                 ), MRStep(
-                mapper_init= self.init_map,
                 mapper=self.map_graph,
-                reducer= self.reducer_graph,
-                combiner=self.combiner_graph
-                ),
-                MRStep(
-                mapper_init= self.init_map,
-                mapper=self.map_graph,
-                reducer= self.reducer_graph,
-                combiner=self.combiner_graph
+                reducer= self.reducer_graph
                 ),MRStep(
-                mapper_init= self.init_map,
                 mapper=self.map_graph,
-                reducer= self.reducer_graph,
-                combiner=self.combiner_graph
+                reducer= self.reducer_graph
                 )]
     
     def init_map(self):
@@ -62,48 +52,36 @@ class Graphs(MRJob):
         self.connections = line[0]
         self.distance = line[1]
         self.visited = line[2]
-        if('a' in self.nodeid):
+        if('a' in self.nodeid and self.visited != 'Black'):
             self.visited = 'Gray'
         if(self.visited == 'Gray'):
             for connection in self.connections:
                 yield (connection, int(self.distance) +1)
                 yield (connection, 'Gray')
+            print self.nodeid
             self.visited = 'Black'
             yield (self.nodeid, self.visited)
         yield(self.nodeid,self.connections)
         
     def reducer_graph(self, key, values):
         edges = []
-        visited = 'White'
+        visited = ''
         distance = 0
         # Extend new list of edges to node
         for value in values:
              if(type(value) is list and len(value) > 0):
-                 edges = value
-                 yield(key, edges)
+                 edges.extend(value)
+                 #yield(key, edges)
              elif(type(value) is int):
                  distance = value
-                 yield (key, distance)
+                 #yield (key, distance)
              elif(isinstance(value, six.string_types) and value == 'Black'):
                  visited = 'Black'
-                 yield (key, visited)
+                 #yield (key, visited)
              elif(isinstance(value, six.string_types) and value == 'Gray'):
                  visited = 'Gray'
-                 yield (key, visited)
-             #yield(key,[edges,distance,visited])
-
-    def combiner_graph(self, key, values):
-        edges = []
-        visited = 'White'
-        distance = 0
-        for value in values:
-            if(type(value) is list):
-                 edges = value
-            elif(type(value) is int):
-                 distance = value
-            elif(isinstance(value, six.string_types)):
-                 visited = value
+                 #yield (key, visited)
         yield(key,[edges,distance,visited])
- 
+
 if __name__ == '__main__':
     Graphs.run()
