@@ -14,10 +14,11 @@ import heapq as minq
 class edgeCount(MRJob):
   heap = list()
   def steps(self):
-       return [MRStep(mapper=self.mapper, combiner=self.combine_edge_weight, reducer = self.reducer_vertex_weight)]
+       return [MRStep(mapper=self.mapper, combiner=self.combine_edge_weight, reducer = self.reducer_vertex_weight), MRStep(reducer = self.reducer_find_max_word, reducer_init = self.init)]#,MRStep(mapper_init = self.init, mapper_final = self.final, mapper = self.reducer_vertex_weight)]
   
   #### FIRST JOB ####
   def init(self):
+        print ("init reducer")
         self.final_counter = 0
         self.heap = [(0, "")] * 10
         minq.heapify(self.heap)
@@ -39,43 +40,25 @@ class edgeCount(MRJob):
             
                 yield (vertex, 1)
             counter = counter + 1    
-  
+        #print("mapper done")
   def combine_edge_weight(self, vertex, counts):
         # sum occurences (equal to degree) of the vertex
         #weight = sum(counts)
-        #print("calling combiner " + vertex)
         yield (vertex, sum(counts))
  
     
   def reducer_vertex_weight(self, vertex, weights):
-      #print("calling reducer " + vertex)
-      #w = sum(weights)
-      #if w > 2 and self.heap[0][0] < w:
-       # minq.heappop(self.heap)
-       # minq.heappush(self.heap, (w, vertex))
-        #yield (vertex, w)
+     yield None, (sum(weights), vertex)
      
       #yield (vertex, sum(weights))
       
-      #print("calling reducer " + vertex)
-      w = sum(weights)
-      
-      for i in range(len(heap)):
-          print(heap[i][1])
-          if heap[i][1] == vertex:
-              print("already in the heap")
-      
-      if w > 2 and heap[0][0] < w:
-        minq.heappop(heap)
-        minq.heappush(heap, (w, vertex))
-        #yield (vertex, w)
-     
-      #yield (vertex, sum(weights))
-      
-  def final(self):  
-      for i in range(len(heap)):
-          print(minq.heappop(heap)) 
-                 
+  def reducer_find_max_word(self, _, word_count_pairs):
+        print("final reducer") 
+        print(len(heap))
+      # each item of word_count_pairs is (count, word),
+        # so yielding one results in key=counts, value=word
+        yield max(word_count_pairs)
+
   #def reducer_find_max_common_authors(self, _, word_count_pairs):
    #   yield (_, sum(word_count_pairs)
       #print(word_count_pairs) 
@@ -110,11 +93,10 @@ class edgeCount(MRJob):
 if __name__ == '__main__':
     print ("init reducer")
     final_counter = 0
-    heap = [(0, ("",""))] * 10
+    heap = [(0, "")] * 10
     minq.heapify(heap)
     
     edgeCount.run()
-    for i in range(len(heap)):
-          print(minq.heappop(heap))
-    sys.exit("Done parsing")
+   
+    sys.exit("The graph does hot have an Euler tour")
       

@@ -115,12 +115,12 @@ def writeToFile(string, filepath):
     elapsed = timeit.default_timer() - start_time
     print ("wrting to file done in: " + str(elapsed))
 
-def get_the_list(limit):
+def get_the_list(limit = "_all"):
     con = sqlite3.connect('reddit.db')
     con.text_factory = str ## this is done to decode the shit strings in the database
     con.isolation_level = None
     cur = con.cursor()
-    statement = "select id from authors limit " + limit + ";"
+    statement = "select id from authors;"
     edges = 0
     string = ""
     write_count = 0
@@ -150,10 +150,12 @@ def get_the_list(limit):
                         print("writing to file, write nr. " + str(write_count))
                         elapsed = timeit.default_timer() - start_time
                         print ("running time: " + str(elapsed))
-                        writeToFile(string, "common2"+limit+".txt")
+                        writeToFile(string, "common"+limit+".txt")
                         ## reset the string nholder
                         string = ""
-                        
+                ##write the last bit to the file
+                print("wrting the last " + str(count) + " lines")
+                writeToFile(string, "common"+limit+".txt")        
         except sqlite3.Error as e:
             print ("An error occurred:", e.args[0])
             
@@ -207,7 +209,7 @@ def test(rowCount):
 
 #print(test(6))
 
-get_the_list("5")
+get_the_list()
 #Select OrderID, Count(OrderID) as oc from 'Order Details' where OrderID in (Select OrderID from Orders where CustomerID = 'ALFKI') group by OrderID) where oc > 1
 ##get_subr_for_authors("10")
 #do()
