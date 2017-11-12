@@ -7,17 +7,22 @@ Created on Sun Nov 12 12:17:41 2017
 from mrjob.job import MRJob
 from mrjob.step import MRStep
 import sys
+import numpy as np
+import heapq as minq
+
 
 class edgeCount(MRJob):
 
-    def steps(self):
-        print ("The graph has an Euler tour")
-            # define the steps for the job, here two steps.
-        return [MRStep(mapper=self.mapper,
-                reducer=self.reducer_vertex_links)]
+  def steps(self):
+       return [MRStep(mapper_init=self.init, mapper=self.mapper, reducer=self.reducer_vertex_links), MRStep(mapper=self.top_10_mapper, reducer=self.top_10_reducer, reducer_final = self.final)]
   
   #### FIRST JOB ####
-    def mapper(self, _, line):
+  def init(self):
+        top_ten_weights = [0] * 10
+        self.heap = minq.heapify(top_ten_weights)
+        
+  
+  def mapper(self, _, line):
         line.strip()    
         sbr_ids = line.split()
         #count_sbr_ids = len(sbr_ids)
@@ -32,19 +37,30 @@ class edgeCount(MRJob):
                 yield (vertex, 1)
             counter = counter + 1    
   
-def reducer_vertex_links(self, vertex, counts):
-    # sum occurences (equal to degree) of the vertex
-    yield (vertex,sum(counts))
+  def reducer_vertex_links(self, vertex, counts):
+        # sum occurences (equal to degree) of the vertex
+        yield (vertex,sum(counts))
+  
+  def top_10_mapper(self, vertex, vertex_weight):
+           
+        ##check if weight is below current lowest top 10
+        if vertex_weight > self.heap[0]:
+            yield (vertex, vertex_weight)
+        
+                
+                
+        
+  def top_10_reducer(self, vertex, vertex_weight):
       
-    if __name__ == '__main__':
-        edgeCount.run()
-        sys.exit("The graph does hot have an Euler tour")
-  
- #### SECOND JOB ####
-def reducer_uneven_links(self, _, vertex_counts):
-  # check if any of the vertices have uneven degrees.
-  
-  if __name__ == '__main__':
-      edgeCount.run()
-      sys.exit("The graph does hot have an Euler tour")
+      self.heap.push(self.heap, vertex_weight)
+        # check if any of the vertices have uneven degrees.
+
+  def final(self, _, heap):
+      for val in self.heap:          
+          yield self.heap.pop()
+      
+if __name__ == '__main__':
+    edgeCount.run()
+    
+    sys.exit("The graph does hot have an Euler tour")
       
