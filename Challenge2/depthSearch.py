@@ -42,7 +42,7 @@ def do():
     con.text_factory = str ## this is done to decode the shit strings in the database
     con.isolation_level = None
     cur = con.cursor()
-    statement = "select id from subreddits limit 10;"
+    statement = "select id from subreddits;"
     # d = OrderedDict(sorted(data.items(), key=itemgetter(1)))
     ##counters
    
@@ -95,5 +95,7 @@ def writeToFile(string, filepath):
         file_handler.write(string)
     #elapsed = timeit.default_timer() - start_time
     #print ("wrting to file done in: " + str(elapsed))
-
+import time
+start_time = time.time()
 do()
+print("--- %s seconds ---" % (time.time() - start_time))

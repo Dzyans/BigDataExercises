@@ -71,8 +71,10 @@ class Graphs(MRJob):
                 ), MRStep(
                 mapper=self.map_graph,
                 reducer= self.reducer_graph
-                ),MRStep(mapper=self.mapper_make_counts_key,
-                   reducer=self.reducer_output_words)]
+                ),MRStep(
+                   mapper=self.mapper_make_counts_key,
+                   reducer=self.reducer_output_vertices
+                   )]
     
     def init_map(self):
         self.nodeid = ''
@@ -133,15 +135,12 @@ class Graphs(MRJob):
         # Step 2
     def mapper_make_counts_key(self, key, line):
         # sort by values
-        yield '%04d' % int(line[1]), key
-
-    def reducer_output_words(self, count, vertices):
+        yield( ['%04d' % int(line[1]), key])
+    
+    def reducer_output_vertices(self, count, vertices):
         # First Column is the count
         # Second Column is the word
-        print vertices
-        for vertice in vertices:    
-            yield count, vertice
-    
-        
+        for vertice in vertices:
+            yield count, vertice        
 if __name__ == '__main__':
     Graphs.run()
