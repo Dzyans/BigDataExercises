@@ -7,9 +7,6 @@ Created on Mon Nov 13 17:15:44 2017
 import six
 from mrjob.job import MRJob
 from mrjob.step import MRStep
-import re
-from collections import defaultdict
-from mrjob.protocol import RawValueProtocol
 import json
 
 class Graphs(MRJob):
