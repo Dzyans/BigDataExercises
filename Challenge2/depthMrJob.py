@@ -122,8 +122,7 @@ class Graphs(MRJob):
     
     def mean_reduce(self,key,values):
         self.increment_counter('group','mean_reduce',1)
-        print globvar
-        yield (key , float(sum(values)/globvar))
+        yield (key , float(sum(values)))
             
     def mapper_make_counts_key(self, key, line):
         self.increment_counter('group','mean_map_calls',1)
