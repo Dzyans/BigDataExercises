@@ -59,37 +59,7 @@ class edgeCount(MRJob):
         # so yielding one results in key=counts, value=word
         yield max(word_count_pairs)
 
-  #def reducer_find_max_common_authors(self, _, word_count_pairs):
-   #   yield (_, sum(word_count_pairs)
-      #print(word_count_pairs) 
-      #if self.heap[0] < word_count_pairs:
-        #  self.heap.pop()
-        #  self.heap.push(self.heap, word_count_pairs)
-        #  yield (word_count_pairs)
-        # each item of word_count_pairs is (count, word),
-        # so yielding one results in key=counts, value=word
-        
 
-  #def reduce_to_max(self, _, weight_pairs):
-       
-     # yield (weight_pairs, "")
-      
-    
-    #def top_10_mapper(self, vertex, vertex_weight):
-           
-        ##check if weight is below current lowest top 10
-     #   if vertex_weight > self.heap[0]:
-      #      yield (vertex, vertex_weight)
-       
-  #def top_10_reducer(self, vertex, vertex_weight):
-      
-   #   self.heap.push(self.heap, vertex_weight)
-        # check if any of the vertices have uneven degrees.
-
-  #def final(self, _, heap):
-   #   for val in self.heap:          
-    #      yield self.heap.pop()
-      
 if __name__ == '__main__':
     print ("init reducer")
     final_counter = 0

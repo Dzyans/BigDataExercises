@@ -14,19 +14,7 @@ Created on Sun Nov  5 22:47:18 2017
 
 import sqlite3
 from collections import OrderedDict
-from operator import itemgetter
-
-def GO():
-    conn = sqlite3.connect('reddit.db')
-    ##copy fuckin paste
-    c = conn.cursor()
-
-    # Get all tables
-    c.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;")
-
-    print (c.fetchall())
-
-    conn.close()
+import timeit
 
 def add_words_to_set(the_set, the_string, verbose = False):
     word_count = 0
@@ -75,8 +63,6 @@ def get_vocabularySet(sbr_id, verbose = False):
         except sqlite3.Error as e:
             print ("An error occurred:", e.args[0])
                 
-
-
 def get_vocabs():
     con = sqlite3.connect('reddit.db')
     con.text_factory = str ## this is done to decode the shit strings in the database
@@ -119,60 +105,22 @@ def get_vocabs():
     con.close()
     return sub_reds_vocab
 
-def db_shell():
-    con = sqlite3.connect('reddit.db')
-    con.text_factory = str ## this is done to decode the shit strings in the database
-    con.isolation_level = None
-    cur = con.cursor()
-
-    buffer = ""
-
-    print ("Enter your SQL commands to execute in sqlite3.")
-    print ("Enter a blank line to exit.")
-
-    while True:
-        line = input()
-        if line == "":
-            break
-        buffer += line
-        ##print buffer
-        if sqlite3.complete_statement(buffer):
-            print (buffer)
-            try:
-                buffer = buffer.strip()
-                cur.execute(buffer)
-
-                if buffer.lstrip().upper().startswith("SELECT"):
-                    #values = cur.fetchall()
-                    names = list(map(lambda x: x[0], cur.description))
-                    print (names)
-                    for row in cur:
-                    #for val in values:
-                        print (row)
-            except sqlite3.Error as e:
-                print ("An error occurred:", e.args[0])
-            buffer = ""
-
-    con.close()
-
 def with_sorted(the_dict):
      return sorted(the_dict.items(), key=(lambda x: x[1]), reverse=True)[:10]
-GO()
-#get_stuff("select * from comments;")
-#get_vocab()
 
-#vocabs = get_vocabs()
+start_time = timeit.default_timer()
+vocabs = get_vocabs()
 
-#svocabs = with_sorted(vocabs)
+svocabs = with_sorted(vocabs)
 
-#for k in svocabs:
-#    print (k)
+for k in svocabs:
+    print (k)
     
-
+elapsed = timeit.default_timer() - start_time
+print ("Counting and sorting done in: " + str(elapsed) + " seconds")
 
 #get_vocabularySet("t5_2qh1i")
 #get_vocabs("select * from comments where subreddit_id = 't5_2r0gj' limit 3;", True)
-db_shell()
 
 #select subreddit_id from comments where author_id in(select author_id from comments where subreddit_id = 't5_247i');
 #select count(distinct subreddit_id) from comments where author_id in(select author_id from comments where subreddit_id = 't5_247i');

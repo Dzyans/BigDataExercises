@@ -93,7 +93,13 @@ def do_it():
     con.text_factory = str ## this is done to decode the shit strings in the database
     con.isolation_level = None
     cur = con.cursor()
+<<<<<<< HEAD
     statement =  "select subreddit_id, parent_id, id from comments limit 1000;"
+=======
+
+    statement =  "select subreddit_id, parent_id, id from comments limit 100;"
+
+>>>>>>> 1de6ebd13dd1b0de1b87882857526ae02f1eff74
     # d = OrderedDict(sorted(data.items(), key=itemgetter(1)))
     ##counters
    
