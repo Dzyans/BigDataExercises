@@ -157,49 +157,6 @@ class Graphs(MRJob):
         # Second Column is the word
         for vertice in vertices:
             yield count, vertice        
-class finalize:
-    def steps(self):
-        return [MRStep(
-                reducer=self.find_leaf
-                ),MRStep(
-                mapper = self.mean_map,
-                reducer = self.mean_reduce
-                ),MRStep(
-                mapper=self.mapper_make_counts_key,
-                reducer=self.reducer_output_vertices
-                )]
-    def find_leaf(self,key,values):
-        for value in values:
-            nodeid = key[0]
-            subreddit = key[1]
-            connections = value[0]
-            distance = value[1]
-            visited = value[2]
-        if(visited=='Black' and len(connections) == 0):
-            yield(nodeid,[connections,distance,visited,subreddit])    
-        # Step 2
-       
-    def mean_map(self,key,line):
-        self.increment_counter('group','mean_map_calls',1)
-        set_globvar(globvar +1)
-        yield (line[3],line[1])
-    
-    def mean_reduce(self,key,values):
-        self.increment_counter('group','mean_reduce',1)
-        yield (key , float(sum(values)))
-            
-    def mapper_make_counts_key(self, key, line):
-        self.increment_counter('group','mean_map_calls',1)
-        # sort by values
-        yield( ['%04d' % int(line), key])
-
-    
-    def reducer_output_vertices(self, count, vertices):
-        self.increment_counter('group','mean_map_calls',1)
-        # First Column is the count
-        # Second Column is the word
-        for vertice in vertices:
-            yield count, vertice    
 
 if __name__ == '__main__':
     Graphs.run()

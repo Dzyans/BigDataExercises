@@ -93,7 +93,7 @@ def do_it():
     con.text_factory = str ## this is done to decode the shit strings in the database
     con.isolation_level = None
     cur = con.cursor()
-    statement =  "select subreddit_id, parent_id, id from comments limit 100;"
+    statement =  "select subreddit_id, parent_id, id from comments limit 1000;"
     # d = OrderedDict(sorted(data.items(), key=itemgetter(1)))
     ##counters
    
@@ -125,13 +125,13 @@ def do_it():
                             print("writing to file, write nr. " + str(write_count))
                             #elapsed = timeit.default_timer() - start_time
                             #print ("running time: " + str(elapsed))
-                            writeToFile(input_string, "sbr_id_pid_id_all.txt")
+                            writeToFile(input_string, "sbr_id_pid_id_subset.txt")
                             ## reset the string nholder
                             input_string = ""
                             count = 0
                     
                 print("wrting the last " + str(count) + " lines")
-                writeToFile(input_string, "sbr_id_pid_id_all.txt") 
+                writeToFile(input_string, "sbr_id_pid_id_subset.txt") 
                 print(str(metacount) + " written in total")
         except sqlite3.Error as e:
             print ("An error occurred:", e.args[0])

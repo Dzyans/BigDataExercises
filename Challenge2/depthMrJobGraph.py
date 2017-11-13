@@ -22,23 +22,24 @@ class Graphs(MRJob):
         foo =  json.loads(_key)
         bar = json.loads(_line)
 
-        self.nodeid = foo[0]
-        self.subreddit = foo[1]
-        self.connections = bar[0]
-        self.distance = bar[1]
-        self.visited = bar[2]
-        if('t3_' in self.nodeid and self.visited != 'Black'):
-            self.visited = 'Gray'
-        if(self.visited == 'Gray'):
-            for connection in self.connections:
-                yield (connection, int(self.distance) +1)
+        nodeid = foo[0]
+        subreddit = foo[1]
+        connections = bar[0]
+        distance = bar[1]
+        visited = bar[2]
+        if('t3_' in nodeid and visited != 'Black'):
+            visited = 'Gray'
+        if(visited == 'Gray'):
+            for connection in connections:
+                yield (connection, int(distance) +1)
                 yield (connection, 'Gray')
-                yield (connection,self.subreddit)
-            self.visited = 'Black'
-        yield (self.nodeid, self.distance)
-        yield (self.nodeid, self.visited)
-        yield(self.nodeid, self.connections)
-        yield(self.nodeid, self.subreddit)
+                yield (connection,subreddit)
+            visited = 'Black'
+        yield (nodeid, distance)
+        yield (nodeid, visited)
+        yield(nodeid, connections)
+        yield(nodeid, subreddit)
+        
     def reducer_graph(self, key, values):
         edges = []
         visited = 'White    '
