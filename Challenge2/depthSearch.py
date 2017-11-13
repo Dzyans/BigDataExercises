@@ -87,6 +87,55 @@ def do():
             
     con.close()
     
+
+def do_it():
+    con = sqlite3.connect('reddit.db')
+    con.text_factory = str ## this is done to decode the shit strings in the database
+    con.isolation_level = None
+    cur = con.cursor()
+    statement =  "select subreddit_id, parent_id, id from comments;"
+    # d = OrderedDict(sorted(data.items(), key=itemgetter(1)))
+    ##counters
+   
+    if sqlite3.complete_statement(statement):
+        print (statement)
+        try:
+            statement = statement.strip()
+            cur.execute(statement)
+            print ("done executing")
+            
+            ##if it was a select statement, wil will now iterate the result
+            if statement.lstrip().upper().startswith("SELECT"):
+                count = 0
+                metacount = 0
+                input_string = ""
+                write_count = 1
+                
+                for row in cur:                       
+                    count = count + 1
+                    metacount = metacount +1
+                    _id = row[0]
+                    _pid = row[1]
+                    input_string = input_string + str(_pid) + " " + str(_id) +"\n"
+                
+                        
+                    if count > 0 and count%100000 == 0:
+                            write_count = write_count + 1
+                            print("writing to file, write nr. " + str(write_count))
+                            #elapsed = timeit.default_timer() - start_time
+                            #print ("running time: " + str(elapsed))
+                            writeToFile(input_string, "sbr_id_pid_id_all.txt")
+                            ## reset the string nholder
+                            input_string = ""
+                            count = 0
+                    
+                print("wrting the last " + str(count) + " lines")
+                writeToFile(input_string, "sbr_id_pid_id_all.txt") 
+                print(str(metacount) + " written in total")
+        except sqlite3.Error as e:
+            print ("An error occurred:", e.args[0])
+            
+    con.close()
     
 def writeToFile(string, filepath):
     #print "writing " + str(len(the_list)) + " to " + filepath
@@ -95,5 +144,7 @@ def writeToFile(string, filepath):
         file_handler.write(string)
     #elapsed = timeit.default_timer() - start_time
     #print ("wrting to file done in: " + str(elapsed))
-
-do()
+start_time = timeit.default_timer()
+do_it()
+elapsed = timeit.default_timer() - start_time
+print ("All data written in: " + str(elapsed) + " seconds")
