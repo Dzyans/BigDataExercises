@@ -14,7 +14,7 @@ Created on Sun Nov  5 22:47:18 2017
 
 import sqlite3
 from collections import OrderedDict
-from operator import itemgetter
+import timeit
 
 def GO():
     conn = sqlite3.connect('reddit.db')
@@ -157,22 +157,20 @@ def db_shell():
 
 def with_sorted(the_dict):
      return sorted(the_dict.items(), key=(lambda x: x[1]), reverse=True)[:10]
-GO()
-#get_stuff("select * from comments;")
-#get_vocab()
 
-#vocabs = get_vocabs()
+start_time = timeit.default_timer()
+vocabs = get_vocabs()
 
-#svocabs = with_sorted(vocabs)
+svocabs = with_sorted(vocabs)
 
-#for k in svocabs:
-#    print (k)
+for k in svocabs:
+    print (k)
     
-
+elapsed = timeit.default_timer() - start_time
+print ("Counting and sorting done in: " + str(elapsed) + " seconds")
 
 #get_vocabularySet("t5_2qh1i")
 #get_vocabs("select * from comments where subreddit_id = 't5_2r0gj' limit 3;", True)
-db_shell()
 
 #select subreddit_id from comments where author_id in(select author_id from comments where subreddit_id = 't5_247i');
 #select count(distinct subreddit_id) from comments where author_id in(select author_id from comments where subreddit_id = 't5_247i');
