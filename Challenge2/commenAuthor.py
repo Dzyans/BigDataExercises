@@ -108,12 +108,4 @@ def get_subr_for_author(author_id, limit = "_all"):
 def test(rowCount):
     return ((rowCount * (rowCount + 1)) / 2) - rowCount
 
-
-#print(test(6))
-
 get_the_list()
-#Select OrderID, Count(OrderID) as oc from 'Order Details' where OrderID in (Select OrderID from Orders where CustomerID = 'ALFKI') group by OrderID) where oc > 1
-##get_subr_for_authors("10")
-#do()
-#get_common_subr("t5_21n6")             
-#do()
