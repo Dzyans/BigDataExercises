@@ -29,52 +29,12 @@ class Graphs(MRJob):
                 ), MRStep(
                 mapper=self.map_graph,
                 reducer= self.reducer_graph
-                ), MRStep(
-                mapper=self.map_graph,
-                reducer= self.reducer_graph
-                ), MRStep(
-                mapper=self.map_graph,
-                reducer= self.reducer_graph
-                ), MRStep(
-                mapper=self.map_graph,
-                reducer= self.reducer_graph
-                ), MRStep(
-                mapper=self.map_graph,
-                reducer= self.reducer_graph
-                ), MRStep(
-                mapper=self.map_graph,
-                reducer= self.reducer_graph
-                ), MRStep(
-                mapper=self.map_graph,
-                reducer= self.reducer_graph
-                ), MRStep(
-                mapper=self.map_graph,
-                reducer= self.reducer_graph
-                ), MRStep(
-                mapper=self.map_graph,
-                reducer= self.reducer_graph
-                ), MRStep(
-                mapper=self.map_graph,
-                reducer= self.reducer_graph
-                ), MRStep(
-                mapper=self.map_graph,
-                reducer= self.reducer_graph
-                ), MRStep(
-                mapper=self.map_graph,
-                reducer= self.reducer_graph
-                ), MRStep(
-                mapper=self.map_graph,
-                reducer= self.reducer_graph
-                ), MRStep(
-                mapper=self.map_graph,
-                reducer= self.reducer_graph
-                ), MRStep(
-                mapper=self.map_graph,
-                reducer= self.reducer_graph
                 ),MRStep(
-                   mapper=self.mapper_make_counts_key,
-                   reducer=self.reducer_output_vertices
-                   )]
+                reducer=self.find_leaf
+                ),MRStep(
+                mapper=self.mapper_make_counts_key,
+                reducer=self.reducer_output_vertices
+                )]
     
     def init_map(self):
         self.nodeid = ''
@@ -100,7 +60,6 @@ class Graphs(MRJob):
         self.connections = line[0]
         self.distance = line[1]
         self.visited = line[2]
-        #print self.nodeid, self.connections, self.distance, self.visited
         if('t3_' in self.nodeid and self.visited != 'Black'):
             self.visited = 'Gray'
         if(self.visited == 'Gray'):
@@ -132,6 +91,15 @@ class Graphs(MRJob):
                  #yield (key, visited)
         yield(key,[edges,distance,visited])
     
+    def find_leaf(self,key,values):
+        for value in values:
+            nodeid = key
+            connections = value[0]
+            distance = value[1]
+            visited = value[2]
+        if(visited=='Black'and len(connections) == 0):
+            yield(nodeid,[connections,distance,visited])
+ 
         # Step 2
     def mapper_make_counts_key(self, key, line):
         # sort by values

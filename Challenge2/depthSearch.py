@@ -76,7 +76,7 @@ def do():
                             print("writing to file, write nr. " + str(write_count))
                             #elapsed = timeit.default_timer() - start_time
                             #print ("running time: " + str(elapsed))
-                            writeToFile(string, "pid_id4.txt")
+                            writeToFile(string, "pid_id2.txt")
                             ## reset the string nholder
                             string = ""
                     print(edges)
