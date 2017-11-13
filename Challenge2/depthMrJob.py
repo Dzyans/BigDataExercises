@@ -44,22 +44,15 @@ class Graphs(MRJob):
                 ),MRStep(
                 mapper = self.mean_map,
                 reducer = self.mean_reduce
-                #),MRStep(
-                #mapper=self.mapper_make_counts_key,
-                #reducer=self.reducer_output_vertices
+                ),MRStep(
+                mapper=self.mapper_make_counts_key,
+                reducer=self.reducer_output_vertices
                 )]
     
-    def init_map(self):
-        self.nodeid = ''
-        self.connections =  []
-        self.subreddit = ''
-        #self.distance = 9999
-        #self.color = 'WHITE'
-
 
     def get_vertex(self, key, line):
         subreddit, vertex, parent = line.split()
-        yield (vertex , parent)
+        yield ([vertex,subreddit] , parent)
     
     def combine_vertices(self,vertices,parents):
         for parent in parents:
@@ -70,11 +63,11 @@ class Graphs(MRJob):
         
         
     def map_graph(self, key, line):
-        self.nodeid = key
+        self.nodeid = key[0]
+        self.subreddit = key[1]
         self.connections = line[0]
         self.distance = line[1]
         self.visited = line[2]
-        self.subreddit = 'default value'
         if('t3_' in self.nodeid and self.visited != 'Black'):
             self.visited = 'Gray'
         if(self.visited == 'Gray'):
@@ -109,15 +102,15 @@ class Graphs(MRJob):
                  #yield (key, visited)
              elif(isinstance(value,six.string_types) and 't5_' in value):
                  subreddit=value
-        yield(key,[edges,distance,visited,subreddit])
+        yield([key,subreddit],[edges,distance,visited])
     
     def find_leaf(self,key,values):
         for value in values:
-            nodeid = key
+            nodeid = key[0]
+            subreddit = key[1]
             connections = value[0]
             distance = value[1]
             visited = value[2]
-            subreddit = value[3]
         if(visited=='Black' and len(connections) == 0):
             yield(nodeid,[connections,distance,visited,subreddit])    
         # Step 2
@@ -133,11 +126,14 @@ class Graphs(MRJob):
         yield (key , float(sum(values)/globvar))
             
     def mapper_make_counts_key(self, key, line):
+        self.increment_counter('group','mean_map_calls',1)
         # sort by values
-        yield( ['%04d' % int(line[1]), key])
+        yield( ['%04d' % int(line), key])
 
     
     def reducer_output_vertices(self, count, vertices):
+        self.increment_counter('group','mean_map_calls',1)
+
         # First Column is the count
         # Second Column is the word
         for vertice in vertices:
