@@ -42,7 +42,7 @@ def do():
     con.text_factory = str ## this is done to decode the shit strings in the database
     con.isolation_level = None
     cur = con.cursor()
-    statement = "select id from subreddits limit 10;"
+    statement = "select id from subreddits;"
     # d = OrderedDict(sorted(data.items(), key=itemgetter(1)))
     ##counters
    
@@ -76,7 +76,7 @@ def do():
                             print("writing to file, write nr. " + str(write_count))
                             #elapsed = timeit.default_timer() - start_time
                             #print ("running time: " + str(elapsed))
-                            writeToFile(string, "pid_id4.txt")
+                            writeToFile(string, "pid_id2.txt")
                             ## reset the string nholder
                             string = ""
                     print(edges)
@@ -93,7 +93,7 @@ def do_it():
     con.text_factory = str ## this is done to decode the shit strings in the database
     con.isolation_level = None
     cur = con.cursor()
-    statement =  "select subreddit_id, parent_id, id from comments;"
+    statement =  "select subreddit_id, parent_id, id from comments limit 100000;"
     # d = OrderedDict(sorted(data.items(), key=itemgetter(1)))
     ##counters
    
@@ -114,9 +114,10 @@ def do_it():
                 for row in cur:                       
                     count = count + 1
                     metacount = metacount +1
-                    _id = row[0]
+                    _sbr_id = row[0]
+                    _id = row[2]
                     _pid = row[1]
-                    input_string = input_string + str(_pid) + " " + str(_id) +"\n"
+                    input_string = input_string + str(_sbr_id) + " " + str(_pid) + " " + str(_id) +"\n"
                 
                         
                     if count > 0 and count%100000 == 0:
@@ -144,6 +145,7 @@ def writeToFile(string, filepath):
         file_handler.write(string)
     #elapsed = timeit.default_timer() - start_time
     #print ("wrting to file done in: " + str(elapsed))
+
 start_time = timeit.default_timer()
 do_it()
 elapsed = timeit.default_timer() - start_time
