@@ -22,7 +22,12 @@ def get_the_list(limit = "_all"):
     con.text_factory = str ## this is done to decode the shit strings in the database
     con.isolation_level = None
     cur = con.cursor()
-    statement = "select id from authors;"
+    if limit == " _all":
+        statement = "select id from authors;"
+    else:
+        statement = "select id from authors limit "+ limit +";"
+    
+    #statement = "select id from authors where id in (select distinct author_id from comments where subreddit_id in(select id from subreddits where id in (select subreddit_id from (select subreddit_id, count(subreddit_id) as sc from comments group by subreddit_id) where sc > 1000)));"
     edges = 0
     string = ""
     write_count = 0
@@ -32,9 +37,10 @@ def get_the_list(limit = "_all"):
         try:
             statement = statement.strip()
             cur.execute(statement)
+            print("statement executed")
             ##if it was a select statement, wil will now iterate the result
             if statement.lstrip().upper().startswith("SELECT"):
-                print (str(cur.rowcount) + " authors collected")
+                #print (str(cur.rowcount) + " authors collected")
                 count = 0
                 for row in cur:##with the id, we get the comments for that subreddit                       
                     #print(row[0])
@@ -52,12 +58,12 @@ def get_the_list(limit = "_all"):
                         print("writing to file, write nr. " + str(write_count))
                         elapsed = timeit.default_timer() - start_time
                         print ("running time: " + str(elapsed))
-                        writeToFile(string, "common"+limit+".txt")
+                        writeToFile(string, "commonsubset"+limit+".txt")
                         ## reset the string nholder
                         string = ""
                 ##write the last bit to the file
                 print("wrting the last " + str(count) + " lines")
-                writeToFile(string, "common"+limit+".txt")        
+                writeToFile(string, "commonsubset"+limit+".txt")        
         except sqlite3.Error as e:
             print ("An error occurred:", e.args[0])
             
@@ -108,4 +114,4 @@ def get_subr_for_author(author_id, limit = "_all"):
 def test(rowCount):
     return ((rowCount * (rowCount + 1)) / 2) - rowCount
 
-get_the_list()
+get_the_list("10000")
