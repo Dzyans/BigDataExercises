@@ -15,21 +15,12 @@ def bag_the_words():
     c = 0
     texts = []
     for filename in os.listdir('.\\'):
-<<<<<<< HEAD
-        file_nr = ""
+
         #print (file_counter)
         if filename.endswith(".json"): 
-            # print(os.path.join(directory, filename))
-            if file_counter < 10:
-                file_nr = "00" + str(file_counter)
-            else:
-                file_nr = "0" + str(file_counter)
-            with open('reuters-'+ file_nr+'.json') as data_file:    
-                #print('reuters-'+ file_nr+'.json')
-=======
-        if filename.endswith(".json"): 
+         
             with open(filename) as data_file:    		
->>>>>>> 4235cabd6e79272703b63c71949935d5cdcdc4ba
+
                 json_object = json.load(data_file)
                 #print(data[4]["title"])
                 for data in json_object:
@@ -47,16 +38,13 @@ def bag_the_words():
             continue
         else:
             continue
-<<<<<<< HEAD
+
     print (c)
     create_bag_of_words(texts)
     #verctorize_bag_of_words(texts)
-=======
-    verctorize_bag_of_words(texts)
->>>>>>> 4235cabd6e79272703b63c71949935d5cdcdc4ba
 
 def create_bag_of_words(texts):
-    bagsofwords = [ collections.Counter(re.findall(r'\w+', txt)) for txt in texts]
+    bagsofwords = [collections.Counter(re.findall(r'\w+', txt)) for txt in texts]
     sumbags = sum(bagsofwords, collections.Counter())
     print (len(sumbags))
 
@@ -66,5 +54,5 @@ def verctorize_bag_of_words(texts):
     array = X.toarray()
     print (numpy.shape(array))
     featurenames = vectorizer.get_feature_names()
-    #print featurenames
+    print (featurenames)
 bag_the_words()
