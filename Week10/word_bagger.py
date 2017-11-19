@@ -13,9 +13,9 @@ import numpy
 
 def bag_the_words():
     c = 0
-    file_counter = 0
     texts = []
     for filename in os.listdir('.\\'):
+<<<<<<< HEAD
         file_nr = ""
         #print (file_counter)
         if filename.endswith(".json"): 
@@ -26,6 +26,10 @@ def bag_the_words():
                 file_nr = "0" + str(file_counter)
             with open('reuters-'+ file_nr+'.json') as data_file:    
                 #print('reuters-'+ file_nr+'.json')
+=======
+        if filename.endswith(".json"): 
+            with open(filename) as data_file:    		
+>>>>>>> 4235cabd6e79272703b63c71949935d5cdcdc4ba
                 json_object = json.load(data_file)
                 #print(data[4]["title"])
                 for data in json_object:
@@ -35,18 +39,21 @@ def bag_the_words():
                     elif 'topics' not in data:
                         data.pop
                     else:
-                        body = data['body']
+                        body = (data['body']).lower()
                         body = re.sub(r"\W", " ", body)
                         body = re.sub(' +',' ',body)
                         texts.append(body)
                         c+=1
-            file_counter += 1
             continue
         else:
             continue
+<<<<<<< HEAD
     print (c)
     create_bag_of_words(texts)
     #verctorize_bag_of_words(texts)
+=======
+    verctorize_bag_of_words(texts)
+>>>>>>> 4235cabd6e79272703b63c71949935d5cdcdc4ba
 
 def create_bag_of_words(texts):
     bagsofwords = [ collections.Counter(re.findall(r'\w+', txt)) for txt in texts]
