@@ -93,13 +93,14 @@ def do_it():
     con.text_factory = str ## this is done to decode the shit strings in the database
     con.isolation_level = None
     cur = con.cursor()
-    statement =  "select subreddit_id, parent_id, id from comments limit 1000;"
+    statement =  "select subreddit_id, parent_id, id from comments where subreddit_id in ('t5_2qh1i','t5_2qh33','t5_2qh0u','t5_2qh13', 't5_2qqjc','t5_30uy0','t5_2qh1e','t5_2rfxx','t5_2sgp1','t5_2s7tt');"
     # d = OrderedDict(sorted(data.items(), key=itemgetter(1)))
     ##counters
-   
+    print(statement)
     if sqlite3.complete_statement(statement):
-        print (statement)
+        print ("is good")
         try:
+            print ("trying")
             statement = statement.strip()
             cur.execute(statement)
             print ("done executing")
@@ -111,7 +112,8 @@ def do_it():
                 input_string = ""
                 write_count = 1
                 
-                for row in cur:                       
+                for row in cur:
+                                          
                     count = count + 1
                     metacount = metacount +1
                     _sbr_id = row[0]
@@ -125,13 +127,13 @@ def do_it():
                             print("writing to file, write nr. " + str(write_count))
                             #elapsed = timeit.default_timer() - start_time
                             #print ("running time: " + str(elapsed))
-                            writeToFile(input_string, "sbr_id_pid_id_subset.txt")
+                            writeToFile(input_string, "sbr_id_pid_id_subset2.txt")
                             ## reset the string nholder
                             input_string = ""
                             count = 0
                     
                 print("wrting the last " + str(count) + " lines")
-                writeToFile(input_string, "sbr_id_pid_id_subset.txt") 
+                writeToFile(input_string, "sbr_id_pid_id_subset2.txt") 
                 print(str(metacount) + " written in total")
         except sqlite3.Error as e:
             print ("An error occurred:", e.args[0])
