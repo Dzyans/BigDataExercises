@@ -12,8 +12,6 @@ from sklearn.feature_extraction.text import CountVectorizer
 import numpy
 
 def bag_the_words():
-    #print("doing stuff")
-    # pd.json.loads("C:\\Users\\tadah\\Documents\\BigDataExercises\\Week10\\reuters-010.json")
     c = 0
     texts = []
     for filename in os.listdir('.\\'):
@@ -29,7 +27,10 @@ def bag_the_words():
                     elif 'topics' not in data:
                         data.pop
                     else:
-                        texts.append((data['body']).lower())
+                        body = data['body']
+                        body = re.sub(r"\W", " ", body)
+                        body = re.sub(' +',' ',body)
+                        texts.append(body)
                         c+=1
             continue
         else:
@@ -40,7 +41,8 @@ def bag_the_words():
 
 def create_bag_of_words(texts):
     bagsofwords = [ collections.Counter(re.findall(r'\w+', txt)) for txt in texts]
-    print bagsofwords[0]
+    sumbags = sum(bagsofwords, collections.Counter())
+    print len(sumbags)
 
 def verctorize_bag_of_words(texts):
     vectorizer = CountVectorizer()
@@ -48,6 +50,5 @@ def verctorize_bag_of_words(texts):
     array = X.toarray()
     print numpy.shape(array)
     featurenames = vectorizer.get_feature_names()
-
-
+    #print featurenames
 bag_the_words()
