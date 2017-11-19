@@ -17,7 +17,7 @@ def bag_the_words():
     for filename in os.listdir('.\\'):
         if filename.endswith(".json"): 
             # print(os.path.join(directory, filename))
-            with open('reuters-010.json') as data_file:    
+            with open(filename) as data_file:    
                 json_object = json.load(data_file)
                 #print(data[4]["title"])
                 for data in json_object:
@@ -27,7 +27,7 @@ def bag_the_words():
                     elif 'topics' not in data:
                         data.pop
                     else:
-                        body = data['body']
+                        body = (data['body']).lower()
                         body = re.sub(r"\W", " ", body)
                         body = re.sub(' +',' ',body)
                         texts.append(body)
@@ -36,6 +36,7 @@ def bag_the_words():
         else:
             continue
     print c
+    print len(body)
     #create_bag_of_words(texts)
     verctorize_bag_of_words(texts)
 
