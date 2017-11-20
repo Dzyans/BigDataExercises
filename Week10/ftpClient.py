@@ -11,7 +11,7 @@ from os import getcwd
 
 def download_all():
 
-    for i in range (0,21):   
+    for i in range (0,22):   
         nr = ""
         if i >= 10:
             nr = "" + str(i)
