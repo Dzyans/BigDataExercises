@@ -104,6 +104,8 @@ def hashing_vectorizer(features, n_features):
     
     
 def randomtree(X, y):
+    
+    print ("\n--------------Growing new Tree-----------------")
     start_time = timeit.default_timer()
     clf = RandomForestClassifier(max_depth=2, random_state=0, n_estimators=50, n_jobs = 2)
     
@@ -149,7 +151,7 @@ def randomtree(X, y):
     elapsed = timeit.default_timer() - start_time
     print("Yggdrassil done in " + str(elapsed) + " seconds")
     
-    print ("results --------------------------------------")
+    print (" ------------------results--------------------")
     print ("negetives "+ str(neg))
     
     print ("positive negatives "+ str(posneg))
