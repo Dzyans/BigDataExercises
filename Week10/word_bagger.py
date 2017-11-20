@@ -42,6 +42,7 @@ def bag_the_words():
                         body = re.sub(r"[^\w.,?!]", " ", body)
                         body = re.sub(' +',' ', body)
                         texts.append(body)
+                        
                         if 'earn' in data['topics']:                            
                             topics.append(1)
                         else:
@@ -55,6 +56,11 @@ def bag_the_words():
     print (c)
 
     return verctorize_bag_of_words(texts), topics
+
+def create_bag_of_words(texts):
+    bagsofwords = [collections.Counter(re.findall(r'\w+', txt)) for txt in texts]
+    sumbags = sum(bagsofwords, collections.Counter())
+    print (len(sumbags))
 
 def verctorize_bag_of_words(texts):
     vectorizer = CountVectorizer()
