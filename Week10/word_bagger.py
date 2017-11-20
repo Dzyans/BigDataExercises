@@ -9,7 +9,7 @@ import pandas as pd
 import os
 import collections, re
 from sklearn.feature_extraction.text import CountVectorizer
-
+import timeit
 import numpy as np
 
 
@@ -54,13 +54,17 @@ def bag_the_words():
             continue
 
     print (c)
-
+    
     return verctorize_bag_of_words(texts), topics
 
 def create_bag_of_words(texts):
-    bagsofwords = [collections.Counter(re.findall(r'\w+', txt)) for txt in texts]
+    start_time = timeit.default_timer()
+    bagsofwords = [collections.Counter(re.findall(r"[^\w.,?!]", txt)) for txt in texts]
     sumbags = sum(bagsofwords, collections.Counter())
+    elapsed = timeit.default_timer() - start_time
+    print("Bag_of_words_created_in " + str(elapsed) + " seconds")
     print (len(sumbags))
+   
 
 def verctorize_bag_of_words(texts):
     vectorizer = CountVectorizer()
@@ -74,15 +78,14 @@ def verctorize_bag_of_words(texts):
     
 def randomtree(X, y):
     clf = RandomForestClassifier(max_depth=2, random_state=0, n_estimators=50, n_jobs = 2)
-    Xarray = X.toarray()
     
     y = np.asarray(y)
    
     
-    trainX = Xarray[:8300]
+    trainX = X[:8300]
     trainY = y[:8300]
     
-    testX = Xarray[8301:]
+    testX = X[8301:]
     testy = y[8301:]
     print (testy.ravel())
     print("testX "+  str(len(testX)))
@@ -117,8 +120,14 @@ def randomtree(X, y):
     
     print ("correctness ratio " +  str(pos / len(testy)))
 
-X,y = bag_the_words()
+X, y = bag_the_words()
 
 print (len(y))
 print (y[:5])
-randomtree(X, y)
+
+randomtree(X.toarray(),y)
+
+#randomtree(wb_X, y)
+
+
+
