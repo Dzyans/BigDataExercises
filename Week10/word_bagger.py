@@ -11,6 +11,7 @@ import collections, re
 from sklearn.feature_extraction.text import CountVectorizer
 import timeit
 import numpy as np
+import hashlib
 
 
 from sklearn.ensemble import RandomForestClassifier
@@ -21,6 +22,7 @@ def bag_the_words():
     file_counter = 0
     texts = []
     topics = []
+    hashed_features = []
     for filename in os.listdir('.\\'):
 
         #print (file_counter)
@@ -42,7 +44,9 @@ def bag_the_words():
                         body = re.sub(r"[^\w.,?!]", " ", body)
                         body = re.sub(' +',' ', body)
                         texts.append(body)
-                        
+                        hashed_array = []
+                        hashed_array = hashing_vectorizer(body.split(' '), 1000)
+                        hashed_features.append(hashed_array)
                         if 'earn' in data['topics']:                            
                             topics.append(1)
                         else:
@@ -55,7 +59,7 @@ def bag_the_words():
 
     print (c)
     
-    return verctorize_bag_of_words(texts), topics
+    return verctorize_bag_of_words(texts), hashed_features, topics
 
 def create_bag_of_words(texts):
     start_time = timeit.default_timer()
@@ -75,8 +79,32 @@ def verctorize_bag_of_words(texts):
     #print (len(featurenames))
     return X 
     
+def int_generator(md5_hashed_string):
+    value = 0
+    counter = 0
+    for char in md5_hashed_string:
+        value += ord(char) + counter*4242
+        counter += 1
+    return value
+
+def hashing_vectorizer(features, n_features):
+    hashed_features = np.zeros(n_features, dtype=int)
+    
+    for feature in features:
+        #print ("the word is: " + feature)
+        hashed = hashlib.md5(feature.encode()).hexdigest()
+        
+        index = int_generator(hashed) % n_features
+        #print ("index " + str(index))
+        hashed_features[index] = 1
+        #print (hashed_features)
+        
+        #print (hashed.hexdigest())
+    return hashed_features
+    
     
 def randomtree(X, y):
+    start_time = timeit.default_timer()
     clf = RandomForestClassifier(max_depth=2, random_state=0, n_estimators=50, n_jobs = 2)
     
     y = np.asarray(y)
@@ -87,9 +115,10 @@ def randomtree(X, y):
     
     testX = X[8301:]
     testy = y[8301:]
-    print (testy.ravel())
-    print("testX "+  str(len(testX)))
-    print("testy " + str(len(testy)))
+    
+    #print (testy.ravel())
+    #print("testX "+  str(len(testX)))
+    #print("testy " + str(len(testy)))
     
     clf.fit(trainX , trainY)
     
@@ -102,30 +131,46 @@ def randomtree(X, y):
     
    
     
-    print (clf.feature_importances_)
+    #print (clf.feature_importances_)
     predictions = clf.predict(testX)
-    print ("number of predictions " + str(len(predictions)))
+    #print ("number of predictions " + str(len(predictions)))
     pos = 0
     neg = 0
+    posneg = 0
     
     for i in range(0, len(testy)):
         if predictions[i] == testy[i]:
            pos += 1 
+        elif predictions[i] == 1 and testy[i] == 0:
+            posneg += 1
         else:
             neg += 1
     
+    elapsed = timeit.default_timer() - start_time
+    print("Yggdrassil done in " + str(elapsed) + " seconds")
+    
+    print ("results --------------------------------------")
     print ("negetives "+ str(neg))
+    
+    print ("positive negatives "+ str(posneg))
     
     print ("positives "+ str(pos))
     
     print ("correctness ratio " +  str(pos / len(testy)))
 
-X, y = bag_the_words()
+#print(int_generator("637fgb0e587e46c79448da3a2fea83fe") % 1000)
 
-print (len(y))
-print (y[:5])
+#ins = "stor fed bold"
+
+#hh = hashing_vectorizer(ins.split(' '), 50)
+#print(hh)
+X, h_X, y = bag_the_words()
+
 
 randomtree(X.toarray(),y)
+
+randomtree(h_X,y)
+
 
 #randomtree(wb_X, y)
 
