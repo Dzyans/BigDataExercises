@@ -9,15 +9,18 @@ import pandas as pd
 import os
 import collections, re
 from sklearn.feature_extraction.text import CountVectorizer
-import numpy
+
+import numpy as np
+
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.datasets import make_classification
 
 def bag_the_words():
     c = 0
     file_counter = 0
     texts = []
-    bag = dict()
-    text_set = set()
-    local_set = set()
+    topics = []
     for filename in os.listdir('.\\'):
 
         #print (file_counter)
@@ -38,13 +41,11 @@ def bag_the_words():
                         body = (data['body']).lower()
                         body = re.sub(r"[^\w.,?!]", " ", body)
                         body = re.sub(' +',' ', body)
-                        #words = body.split(' ')
-                        #for word in words:
-                        #   local_set.add(word)
-                        #for word in words:
-                        #    text_set.add(word)
-                        #print (body)
                         texts.append(body)
+                        if 'earn' in data['topics']:                            
+                            topics.append(1)
+                        else:
+                            topics.append(0)
                         c+=1
                         
                        
@@ -52,21 +53,66 @@ def bag_the_words():
             continue
 
     print (c)
-    print (file_counter)
-    print (len(text_set))
-    #create_bag_of_words(texts)
-    verctorize_bag_of_words(texts)
 
-def create_bag_of_words(texts):
-    bagsofwords = [collections.Counter(re.findall(r"[^\w.,?!]", txt)) for txt in texts]
-    sumbags = sum(bagsofwords, collections.Counter())
-    print (len(sumbags))
+    return verctorize_bag_of_words(texts), topics
 
 def verctorize_bag_of_words(texts):
     vectorizer = CountVectorizer()
     X = vectorizer.fit_transform(texts) 
     array = X.toarray()
-    print (numpy.shape(array))
+    #print (numpy.shape(array))
     featurenames = vectorizer.get_feature_names()
-    #print (featurenames)
-bag_the_words()
+    #print (len(featurenames))
+    return X 
+    
+    
+def randomtree(X, y):
+    clf = RandomForestClassifier(max_depth=2, random_state=0)
+    Xarray = X.toarray()
+    
+    y = np.asarray(y)
+   
+    
+    trainX = Xarray[:8300]
+    trainY = y[:8300]
+    
+    testX = Xarray[8301:]
+    testy = y[8301:]
+    print (testy.ravel())
+    print("testX "+  str(len(testX)))
+    print("testy " + str(len(testy)))
+    
+    clf.fit(trainX , trainY)
+    
+    RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',
+            max_depth=2, max_features='auto', max_leaf_nodes=None,
+            min_impurity_decrease=0.0, min_impurity_split=None,
+            min_samples_leaf=1, min_samples_split=2,
+            min_weight_fraction_leaf=0.0, n_estimators=10, n_jobs=1,
+            oob_score=False, random_state=0, verbose=0, warm_start=False)
+    
+   
+    
+    print (clf.feature_importances_)
+    predictions = clf.predict(testX)
+    print ("number of predictions " + str(len(predictions)))
+    pos = 0
+    neg = 0
+    
+    for i in range(0, len(testy)):
+        if predictions[i] == testy[i]:
+           pos += 1 
+        else:
+            neg += 1
+    
+    print ("negetives "+ str(neg))
+    
+    print ("positives "+ str(pos))
+    
+    print ("correctness ratio " +  str(pos / len(testy)))
+
+X,y = bag_the_words()
+
+print (len(y))
+print (y[:5])
+randomtree(X, y)
