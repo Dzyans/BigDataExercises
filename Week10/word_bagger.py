@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sat Nov 18 23:05:34 2017
-
 @author: tadah
 """
 import json
@@ -162,6 +161,3 @@ randomtree(h_X,y)
 
 
 #randomtree(wb_X, y)
-
-
-
