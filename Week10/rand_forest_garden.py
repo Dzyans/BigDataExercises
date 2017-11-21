@@ -105,8 +105,7 @@ def int_generator(md5_hashed_string):
 def randomtree(X, y):
     
     print ("\n--------------Growing new Tree-----------------")
-    start_time = timeit.default_timer()
-    clf = RandomForestClassifier(max_depth=2, random_state=0, n_estimators=50, n_jobs = 2)
+    
     
     y = np.asarray(y)
     
@@ -116,8 +115,12 @@ def randomtree(X, y):
     testX = X[8300:]
     testy = y[8300:]
     
-    print(len(trainX) + len(testX))
-
+    print("total input: " + str(len(trainX) + len(testX)))
+    print("training data count: " + str(len(trainX)))
+    print("test data count: " + str(len(testX)))
+    
+    start_time = timeit.default_timer()
+    clf = RandomForestClassifier(max_depth=2, random_state=0, n_estimators=50, n_jobs = 2)
     clf.fit(trainX , trainY)
 
     #print (clf.feature_importances_)
@@ -143,7 +146,7 @@ def randomtree(X, y):
     
     print ("positive negatives "+ str(posneg))
     
-    print ("positives "+ str(pos))
+    print ("correct estimations "+ str(pos))
     
     print ("correctness ratio " +  str(pos / len(testy)))
 
