@@ -53,8 +53,9 @@ def bag_the_words():
             continue
 
     print (c)
+    return create_bag_of_words(texts), topics
 
-    return verctorize_bag_of_words(texts), topics
+    #return verctorize_bag_of_words(texts), topics
 
 def verctorize_bag_of_words(texts):
     vectorizer = CountVectorizer()
@@ -65,6 +66,11 @@ def verctorize_bag_of_words(texts):
     #print (len(featurenames))
     return X 
     
+def create_bag_of_words(texts):
+    bagsofwords = [collections.Counter(re.findall(r'\w+', txt)) for txt in texts]
+    print bagsofwords[0]
+    #sumbags = sum(bagsofwords, collections.Counter())
+    return bag_the_words
     
 def randomtree(X, y):
     clf = RandomForestClassifier(max_depth=2, random_state=0, n_estimators=50, n_jobs = 2)
@@ -115,4 +121,4 @@ X,y = bag_the_words()
 
 print (len(y))
 print (y[:5])
-randomtree(X, y)
+#randomtree(X, y)
