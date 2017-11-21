@@ -110,14 +110,14 @@ def randomtree(X, y):
     clf = RandomForestClassifier(max_depth=2, random_state=0, n_estimators=50, n_jobs = 2)
     
     y = np.asarray(y)
-   
     
     trainX = X[:8300]
     trainY = y[:8300]
     
-    testX = X[8301:]
-    testy = y[8301:]
+    testX = X[8300:]
+    testy = y[8300:]
     
+    print(len(trainX) + len(testX))
     #print (testy.ravel())
     #print("testX "+  str(len(testX)))
     #print("testy " + str(len(testy)))
