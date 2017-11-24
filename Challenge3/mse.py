@@ -23,6 +23,7 @@ def keyframe(num_of_frames):
         #print filename
         vidcap = cv2.VideoCapture('.\\subsubvideos\\' + filename)
         success,image = vidcap.read()
+        keyframes = []
         count = 0
         success = True
         while success:
@@ -30,17 +31,33 @@ def keyframe(num_of_frames):
             if success:
                 if (count == 0):
                     keyframe = image
+                    keyframes.append(keyframe)
                 else:
                     error, simm = pre_compare(keyframe,image)
-                    print error, simm
-                    if (simm < 70):
+                    
+                    if (simm < 0.70):
+                        print error, simm
                         keyframe = image
+                        keyframes.append(keyframe)
                 count += 1
             if (count == num_of_frames and num_of_frames is not None):
                 break;
         vidcap.release()
-        #print count
+        #print 'number of feature frames: ' + str(count_feature_frames)
+        show_keyframes(keyframes)
 
+def show_keyframes(keyframes):
+    print len(keyframes)
+    # loop over the images
+    fig = plt.figure("Images")
+    for (i, (image)) in enumerate(keyframes):
+    	# show the image
+    	ax = fig.add_subplot(6, 6, i + 1)
+    	plt.imshow(image, cmap = plt.cm.gray)
+    	plt.axis("off")
+     
+    # show the figure
+    #plt.show()
 def pre_compare(keyframe,image):
     #greyscale the image
     keyframe = cv2.cvtColor(keyframe, cv2.COLOR_BGR2GRAY)
