@@ -35,7 +35,7 @@ def keyframe(num_of_frames):
                 else:
                     error, simm = pre_compare(keyframe,image)
                     
-                    if (simm < 0.70):
+                    if (simm < 0.60):
                         print error, simm
                         keyframe = image
                         keyframes.append(keyframe)
