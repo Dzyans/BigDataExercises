@@ -13,7 +13,7 @@ Created on Tue Nov 21 13:10:20 2017
 """
 import os
 # import the necessary packages
-from skimage.measure import structural_similarity as ssim
+from skimage.measure import compare_ssim as ssim
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2
@@ -33,6 +33,8 @@ def keyframe(num_of_frames):
                 else:
                     error, simm = pre_compare(keyframe,image)
                     print error, simm
+                    if (simm < 70):
+                        keyframe = image
                 count += 1
             if (count == num_of_frames and num_of_frames is not None):
                 break;
@@ -40,25 +42,27 @@ def keyframe(num_of_frames):
         #print count
 
 def pre_compare(keyframe,image):
+    #greyscale the image
     keyframe = cv2.cvtColor(keyframe, cv2.COLOR_BGR2GRAY)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # pixelize the image
     keyframe = cv2.resize(keyframe, (8,9))
     image = cv2.resize(image, (8,9))
 
     # initialize the figure
-    fig = plt.figure("Images")
-    images = ("keyframe", keyframe), ("image", image)
+    #fig = plt.figure("Images")
+    #images = ("keyframe", keyframe), ("image", image)
      
     # loop over the images
-    for (i, (name, image)) in enumerate(images):
+    #for (i, (name, image)) in enumerate(images):
     	# show the image
-    	ax = fig.add_subplot(1, 3, i + 1)
-    	ax.set_title(name)
-    	plt.imshow(image, cmap = plt.cm.gray)
-    	plt.axis("off")
+    	#ax = fig.add_subplot(1, 3, i + 1)
+    	#ax.set_title(name)
+    	#plt.imshow(image, cmap = plt.cm.gray)
+    	#plt.axis("off")
      
     # show the figure
-    plt.show()
+    #plt.show()
  
     # compare the images
     return compare_images(keyframe, image, "Original vs. Contrast")
@@ -81,22 +85,22 @@ def compare_images(imageA, imageB, title):
     s = ssim(imageA, imageB)
     
     # setup the figure
-    fig = plt.figure(title)
-    plt.suptitle("MSE: %.2f, SSIM: %.2f" % (m, s))
+    #fig = plt.figure(title)
+    #plt.suptitle("MSE: %.2f, SSIM: %.2f" % (m, s))
     
     # show first image
-    ax = fig.add_subplot(1, 2, 1)
-    plt.imshow(imageA, cmap = plt.cm.gray)
-    plt.axis("off")
+    #ax = fig.add_subplot(1, 2, 1)
+    #plt.imshow(imageA, cmap = plt.cm.gray)
+    #plt.axis("off")
  
     # show the second image
-    ax = fig.add_subplot(1, 2, 2)
-    plt.imshow(imageB, cmap = plt.cm.gray)
-    plt.axis("off")
+    #ax = fig.add_subplot(1, 2, 2)
+    #plt.imshow(imageB, cmap = plt.cm.gray)
+    #plt.axis("off")
     
     # show the images
-    plt.show()
+    #plt.show()
     return m,s
 
 
-keyframe(20)
+keyframe(None)
