@@ -17,6 +17,9 @@ from skimage.measure import compare_ssim as ssim
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2
+from shutil import copyfile
+import os, shutil, stat
+
 
 def keyframe(num_of_frames):
     # try running on 0KAJ1U2BPIO7.mp4, 3T7FSSZD3P6T.mp4, Z4ZMSTGKXTK3.mp4
@@ -88,4 +91,22 @@ def compare_images(imageA, imageB):
     return m,s
 
 
+def create_subset():
+    files = ['0KAJ1U2BPIO7.mp4', '3T7FSSZD3P6T.mp4', 'Z4ZMSTGKXTK3.mp4']
+    dest = '.\subsubvideos'
+    source = 'videos'
+    for the_file in os.listdir(dest):
+        file_path = os.path.join(dest, the_file)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path): shutil.rmtree(file_path)
+        except Exception as e:
+            print(e)
+    for file in files:
+        file_path = os.path.join(source, file)
+        os.chmod(dest, stat.S_IWRITE)
+        shutil.copy(file_path, dest)
+
+create_subset()
 keyframe(None)
