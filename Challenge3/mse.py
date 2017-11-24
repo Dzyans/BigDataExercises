@@ -24,7 +24,6 @@ def keyframe(num_of_frames):
         vidcap = cv2.VideoCapture('.\\subsubvideos\\' + filename)
         success,image = vidcap.read()
         count = 0
-        result = []
         success = True
         while success:
             success,image = vidcap.read()
@@ -32,8 +31,8 @@ def keyframe(num_of_frames):
                 if (count == 0):
                     keyframe = image
                 else:
-                    result = pre_compare(keyframe,image)
-                    print result
+                    error, simm = pre_compare(keyframe,image)
+                    print error, simm
                 count += 1
             if (count == num_of_frames and num_of_frames is not None):
                 break;
@@ -43,6 +42,9 @@ def keyframe(num_of_frames):
 def pre_compare(keyframe,image):
     keyframe = cv2.cvtColor(keyframe, cv2.COLOR_BGR2GRAY)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    keyframe = cv2.resize(keyframe, (8,9))
+    image = cv2.resize(image, (8,9))
+
     # initialize the figure
     fig = plt.figure("Images")
     images = ("keyframe", keyframe), ("image", image)
@@ -56,7 +58,7 @@ def pre_compare(keyframe,image):
     	plt.axis("off")
      
     # show the figure
-    #plt.show()
+    plt.show()
  
     # compare the images
     return compare_images(keyframe, image, "Original vs. Contrast")
@@ -94,7 +96,7 @@ def compare_images(imageA, imageB, title):
     
     # show the images
     plt.show()
-    return [m,s]
+    return m,s
 
 
-keyframe(6)
+keyframe(20)
