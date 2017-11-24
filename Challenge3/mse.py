@@ -90,11 +90,10 @@ def compare_images(imageA, imageB):
     s = ssim(imageA, imageB)
     return m,s
 
-
-def create_subset():
+#input source of the videos
+def create_subset(source):
     files = ['0KAJ1U2BPIO7.mp4', '3T7FSSZD3P6T.mp4', 'Z4ZMSTGKXTK3.mp4']
     dest = '.\subsubvideos'
-    source = 'videos'
     for the_file in os.listdir(dest):
         file_path = os.path.join(dest, the_file)
         try:
@@ -108,5 +107,5 @@ def create_subset():
         os.chmod(dest, stat.S_IWRITE)
         shutil.copy(file_path, dest)
 
-create_subset()
+create_subset('videos')
 keyframe(None)
