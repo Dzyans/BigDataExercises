@@ -19,6 +19,7 @@ import numpy as np
 import cv2
 
 def keyframe(num_of_frames):
+    # try running on 0KAJ1U2BPIO7.mp4, 3T7FSSZD3P6T.mp4, Z4ZMSTGKXTK3.mp4
     for filename in os.listdir('.\subsubvideos'):
         #print filename
         vidcap = cv2.VideoCapture('.\\subsubvideos\\' + filename)
@@ -36,7 +37,6 @@ def keyframe(num_of_frames):
                     error, simm = pre_compare(keyframe,image)
                     
                     if (simm < 0.60):
-                        print error, simm
                         keyframe = image
                         keyframes.append(keyframe)
                 count += 1
@@ -44,12 +44,12 @@ def keyframe(num_of_frames):
                 break;
         vidcap.release()
         #print 'number of feature frames: ' + str(count_feature_frames)
-        show_keyframes(keyframes)
+        show_keyframes(keyframes, filename)
 
-def show_keyframes(keyframes):
+def show_keyframes(keyframes,filename):
     print len(keyframes)
     # loop over the images
-    fig = plt.figure("Images")
+    fig = plt.figure("Images"+ filename)
     for (i, (image)) in enumerate(keyframes):
     	# show the image
     	ax = fig.add_subplot(6, 6, i + 1)
@@ -67,7 +67,7 @@ def pre_compare(keyframe,image):
     image = cv2.resize(image, (8,9))
  
     # compare the images
-    return compare_images(keyframe, image, "Original vs. Contrast")
+    return compare_images(keyframe, image)
 
 def mse(imageA, imageB):
 	# the 'Mean Squared Error' between the two images is the
@@ -80,7 +80,7 @@ def mse(imageA, imageB):
 	# the two images are
 	return err
  
-def compare_images(imageA, imageB, title):
+def compare_images(imageA, imageB):
     # compute the mean squared error and structural similarity
     # index for the images
     m = mse(imageA, imageB)
