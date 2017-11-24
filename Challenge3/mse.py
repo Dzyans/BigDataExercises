@@ -65,21 +65,6 @@ def pre_compare(keyframe,image):
     # pixelize the image
     keyframe = cv2.resize(keyframe, (8,9))
     image = cv2.resize(image, (8,9))
-
-    # initialize the figure
-    #fig = plt.figure("Images")
-    #images = ("keyframe", keyframe), ("image", image)
-     
-    # loop over the images
-    #for (i, (name, image)) in enumerate(images):
-    	# show the image
-    	#ax = fig.add_subplot(1, 3, i + 1)
-    	#ax.set_title(name)
-    	#plt.imshow(image, cmap = plt.cm.gray)
-    	#plt.axis("off")
-     
-    # show the figure
-    #plt.show()
  
     # compare the images
     return compare_images(keyframe, image, "Original vs. Contrast")
@@ -100,23 +85,6 @@ def compare_images(imageA, imageB, title):
     # index for the images
     m = mse(imageA, imageB)
     s = ssim(imageA, imageB)
-    
-    # setup the figure
-    #fig = plt.figure(title)
-    #plt.suptitle("MSE: %.2f, SSIM: %.2f" % (m, s))
-    
-    # show first image
-    #ax = fig.add_subplot(1, 2, 1)
-    #plt.imshow(imageA, cmap = plt.cm.gray)
-    #plt.axis("off")
- 
-    # show the second image
-    #ax = fig.add_subplot(1, 2, 2)
-    #plt.imshow(imageB, cmap = plt.cm.gray)
-    #plt.axis("off")
-    
-    # show the images
-    #plt.show()
     return m,s
 
 
