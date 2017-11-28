@@ -37,11 +37,11 @@ def keyframe(num_of_frames):
                     keyframe = image
                     keyframes.append(keyframe)
                 else:
-                    error, simm = pre_compare(keyframe,image)
+                    error, simm, _keyframe = pre_compare(keyframe,image)
                     
                     if (simm < 0.60):
                         keyframe = image
-                        keyframes.append(keyframe)
+                        keyframes.append(_keyframe)
                 count += 1
             if (count == num_of_frames and num_of_frames is not None):
                 break;
@@ -55,22 +55,26 @@ def show_keyframes(keyframes,filename):
     fig = plt.figure("Images"+ filename)
     for (i, (image)) in enumerate(keyframes):
     	# show the image
-    	ax = fig.add_subplot(6, 6, i + 1)
+    	ax = fig.add_subplot(6, 10, i + 1)
     	plt.imshow(image, cmap = plt.cm.gray)
     	plt.axis("off")
      
     # show the figure
     #plt.show()
 def pre_compare(keyframe,image):
+    #crop the image
+    keyframe = keyframe[200:400, 100:300] # Crop from x, y, w, h -> 100, 200, 300, 400
+    image = image[200:400, 100:300] # Crop from x, y, w, h -> 100, 200, 300, 400
+
     #greyscale the image
     keyframe = cv2.cvtColor(keyframe, cv2.COLOR_BGR2GRAY)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     # pixelize the image
     keyframe = cv2.resize(keyframe, (8,9))
     image = cv2.resize(image, (8,9))
- 
     # compare the images
-    return compare_images(keyframe, image)
+    simm, error = compare_images(keyframe, image)
+    return simm, error ,keyframe
 
 def mse(imageA, imageB):
 	# the 'Mean Squared Error' between the two images is the
@@ -88,6 +92,7 @@ def compare_images(imageA, imageB):
     # index for the images
     m = mse(imageA, imageB)
     s = ssim(imageA, imageB)
+
     return m,s
 
 #input source of the videos
