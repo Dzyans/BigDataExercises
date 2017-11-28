@@ -33,9 +33,14 @@ def keyframe(num_of_frames):
         while success:
             success,image = vidcap.read()
             if success:
+                height, width = image.shape[:2]
+                #print( image.shape)
+                #print ( height)
+                #print ( width)
+                
                 if (count == 0):
                     keyframe = image
-                    keyframes.append(keyframe)
+                    keyframes.append(keyframe[20:height-20, 20:width-20])
                 else:
                     error, simm, _keyframe = pre_compare(keyframe,image)
                     
@@ -50,7 +55,7 @@ def keyframe(num_of_frames):
         show_keyframes(keyframes, filename)
 
 def show_keyframes(keyframes,filename):
-    print len(keyframes)
+    print (len(keyframes))
     # loop over the images
     fig = plt.figure("Images"+ filename)
     for (i, (image)) in enumerate(keyframes):
@@ -63,8 +68,9 @@ def show_keyframes(keyframes,filename):
     #plt.show()
 def pre_compare(keyframe,image):
     #crop the image
-    keyframe = keyframe[200:400, 100:300] # Crop from x, y, w, h -> 100, 200, 300, 400
-    image = image[200:400, 100:300] # Crop from x, y, w, h -> 100, 200, 300, 400
+    height, width = image.shape[:2]
+    keyframe = keyframe[20:height-20, 20:width-20] # Crop from x, y, w, h -> 100, 200, 300, 400
+    image = image[20:height-20, 20:width-20] # Crop from x, y, w, h -> 100, 200, 300, 400
 
     #greyscale the image
     keyframe = cv2.cvtColor(keyframe, cv2.COLOR_BGR2GRAY)
