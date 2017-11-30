@@ -28,6 +28,7 @@ from sklearn import manifold
 
 def keyframe(num_of_frames):
     # try running on 0KAJ1U2BPIO7.mp4, 3T7FSSZD3P6T.mp4, Z4ZMSTGKXTK3.mp4
+    hashes = []
     for filename in os.listdir('.\subsubvideos'):
         #print filename
         
@@ -63,7 +64,8 @@ def keyframe(num_of_frames):
         plt.axis("off")        
         #print 'number of feature frames: ' + str(count_feature_frames)
         mat = create_differences(vis)
-        my_hash(mat)
+        hashes.append(my_hash(mat))
+    cluster(hashes)
         #show_keyframes(keyframes, filename)
 def compare_first(image):
      height, width = image.shape[:2]
@@ -123,7 +125,7 @@ def compare_images(imageA, imageB):
 #input source of the videos
 def create_subset(source):
     #files = ['0KAJ1U2BPIO7.mp4']
-    files = ['0KAJ1U2BPIO7.mp4', '3T7FSSZD3P6T.mp4', 'Z4ZMSTGKXTK3.mp4']
+    files = ['0KAJ1U2BPIO7.mp4', '3T7FSSZD3P6T.mp4', 'Z4ZMSTGKXTK3.mp4','00SXM76KD1X2.mp4']
     dest = '.\subsubvideos'
     for the_file in os.listdir(dest):
         file_path = os.path.join(dest, the_file)
@@ -140,16 +142,18 @@ def create_subset(source):
 
 # Function to create hash (from David on Aula)
 def my_hash(differences):
+    hexi = ''
     for difference in differences:
-    	decimal_value = 0
-    	hex_string = []
-    	for index, value in enumerate(difference):
-    		if value:
-    			decimal_value += 2**(index % 8)
-    		if (index % 8) == 7:
-    			hex_string.append(hex(decimal_value)[2:].rjust(2, '0'))
-    			decimal_value = 0
-    	print(''.join(hex_string))
+        decimal_value = 0
+        hex_string = []
+        for index, value in enumerate(difference):
+            if value:
+                decimal_value += 2**(index % 8)
+            if (index % 8) == 7:
+                hex_string.append(hex(decimal_value)[2:].rjust(2, '0'))
+                decimal_value = 0
+        hexi += (''.join(''.join(hex_string)))
+    return hexi
 
 # Function to create difference matrix
 def create_differences(img_matrix):
@@ -166,6 +170,19 @@ def create_differences(img_matrix):
 
     return mat
 
-
+def cluster(words):
+    vectorizer = TfidfVectorizer(stop_words='english')
+    X = vectorizer.fit_transform(words)
+    true_k = 2
+    model = KMeans(n_clusters=true_k, init='k-means++', max_iter=100, n_init=1)
+    model.fit(X)
+    print("Top terms per cluster:")
+    order_centroids = model.cluster_centers_.argsort()[:, ::-1]
+    terms = vectorizer.get_feature_names()
+    for i in range(true_k):
+        print "Cluster %d:" % i,
+        for ind in order_centroids[i, :10]:
+            print ' %s' % terms[ind],
+        print
 create_subset('videos')
 keyframe(None)
