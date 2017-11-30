@@ -12,18 +12,15 @@ Created on Tue Nov 21 13:10:20 2017
 @author: tadah
 """
 import os
-import math
 
 # import the necessary packages
 from skimage.measure import compare_ssim as ssim
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2
-from shutil import copyfile
-import os, shutil, stat
-import pandas as pd
-from sklearn import manifold
-
+import shutil, stat
+import sklearn.cluster
+import distance
 
 
 def keyframe(num_of_frames):
@@ -171,18 +168,15 @@ def create_differences(img_matrix):
     return mat
 
 def cluster(words):
-    vectorizer = TfidfVectorizer(stop_words='english')
-    X = vectorizer.fit_transform(words)
-    true_k = 2
-    model = KMeans(n_clusters=true_k, init='k-means++', max_iter=100, n_init=1)
-    model.fit(X)
-    print("Top terms per cluster:")
-    order_centroids = model.cluster_centers_.argsort()[:, ::-1]
-    terms = vectorizer.get_feature_names()
-    for i in range(true_k):
-        print "Cluster %d:" % i,
-        for ind in order_centroids[i, :10]:
-            print ' %s' % terms[ind],
-        print
+    words = np.asarray(words) #So that indexing with a list will work
+    lev_similarity = -1*np.array([[distance.levenshtein(w1,w2) for w1 in words] for w2 in words])
+    
+    affprop = sklearn.cluster.AffinityPropagation(affinity="precomputed", damping=0.5)
+    affprop.fit(lev_similarity)
+    for cluster_id in np.unique(affprop.labels_):
+        exemplar = words[affprop.cluster_centers_indices_[cluster_id]]
+        cluster = np.unique(words[np.nonzero(affprop.labels_==cluster_id)])
+        cluster_str = ", ".join(cluster)
+        print(" - *%s:* %s" % (exemplar, cluster_str))
 create_subset('videos')
 keyframe(None)
