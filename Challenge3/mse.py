@@ -70,7 +70,7 @@ def keyframe(num_of_frames):
         
         #hashes.append(my_hash(mat))
         #print (len(images))
-        feature_lists.append(get_feature_array(images, 6000))
+        feature_lists.append(get_feature_array(keyframes, 1000))
     #print (len (feature_lists))
     #print (feature_lists[1])
     jaccard_cluster(feature_lists, filenames)
@@ -86,6 +86,7 @@ def compare_first(image):
      return image
 
 def get_feature_array(frames, n_features):
+    print ("frames " + str(len(frames)))
     hashed_features = np.zeros(n_features, dtype=int)
     col = 0
     for frame in frames:
@@ -106,6 +107,8 @@ def int_generator(LSH_hashed_string):
     counter = 0
     for char in LSH_hashed_string:
         value += ord(char) + counter*4242
+        if counter % 7 == 0:
+            counter = 0
         counter += 1
     return value
 
@@ -176,15 +179,16 @@ def create_subset(source):
 
 # Function to create hash (from David on Aula)
 def my_hash(differences):
-    #print (differences)
+    
     hexi = ''
     for difference in differences:
         decimal_value = 0
         hex_string = []
         for index, value in enumerate(difference):
+            #print ("index "+ str(index))
             if value:
-                decimal_value += 2**(index % 8)
-            if (index % 8) == 7:
+                decimal_value += 2**(index % 3)
+            if (index % 3) == 2:
                 hex_string.append(hex(decimal_value)[2:].rjust(2, '0'))
                 decimal_value = 0
             if not value:
@@ -217,7 +221,7 @@ def jaccard_cluster(mov_features, mov_names):
     #mov_features = np.asarray(mov_features) #So that indexing with a list will work
     
     lev_similarity = np.array([[jcd(np.asanyarray(w1),np.asanyarray(w2)) for w1 in mov_features] for w2 in mov_features])
-    #print (len(lev_similarity))
+    print (len(lev_similarity))
     #print (lev_similarity)
     affprop = sklearn.cluster.AffinityPropagation()
     affprop.fit(lev_similarity)
@@ -242,7 +246,7 @@ def cluster(words, filenames):
     
     words = np.asarray(words) #So that indexing with a list will work
     lev_similarity = -1*np.array([[distance.levenshtein(w1,w2) for w1 in words] for w2 in words])
-    #print (len(lev_similarity))
+    print (len(lev_similarity))
     #print (lev_similarity)
     affprop = sklearn.cluster.AffinityPropagation()
     affprop.fit(lev_similarity)
