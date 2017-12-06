@@ -21,23 +21,27 @@ import cv2
 import shutil, stat
 import sklearn.cluster
 import distance
-
+from sklearn.metrics import jaccard_similarity_score as jcd
 
 def keyframe(num_of_frames):
     # try running on 0KAJ1U2BPIO7.mp4, 3T7FSSZD3P6T.mp4, Z4ZMSTGKXTK3.mp4
     hashes = []
+    feature_lists = []
+    filenames = []
     for filename in os.listdir('.\subsubvideos'):
         #print filename
-        
+        images =[]
         vidcap = cv2.VideoCapture('.\\subsubvideos\\' + filename)
         success,image = vidcap.read()
         keyframes = []
         count = 0
         success = True
         vis = None
+        
         while success:
             success,image = vidcap.read()
             if success:
+                images.append(compare_first(image))
                 height, width = image.shape[:2]
                 #print( image.shape)
                 #print ( height)
@@ -51,19 +55,29 @@ def keyframe(num_of_frames):
                     if (simm < 0.60):
                         keyframe = image
                         keyframes.append(_keyframe)
-                        vis = np.concatenate((vis,_keyframe),axis=1)
+                        #vis = np.concatenate((vis,_keyframe),axis=1)
                 count += 1
             if (count == num_of_frames and num_of_frames is not None):
                 break;
         vidcap.release()
-        fig = plt.figure("concated"+ filename)
-        plt.imshow(vis, cmap = plt.cm.gray)
-        plt.axis("off")        
+                
+        #fig = plt.figure("concated"+ filename)
+        #plt.imshow(vis, cmap = plt.cm.gray)
+        #plt.axis("off")        
         #print 'number of feature frames: ' + str(count_feature_frames)
-        mat = create_differences(vis)
-        hashes.append(my_hash(mat))
-    cluster(hashes)
+        #mat = create_differences(vis)
+        filenames.append(filename)
+        
+        #hashes.append(my_hash(mat))
+        #print (len(images))
+        feature_lists.append(get_feature_array(images, 6000))
+    #print (len (feature_lists))
+    #print (feature_lists[1])
+    jaccard_cluster(feature_lists, filenames)
+    #cluster(hashes, filenames)
         #show_keyframes(keyframes, filename)
+
+
 def compare_first(image):
      height, width = image.shape[:2]
      image = image[20:height-20, 20:width-20] # Crop from x, y, w, h -> 100, 200, 300, 400
@@ -71,6 +85,29 @@ def compare_first(image):
      image = cv2.resize(image, (8,9))
      return image
 
+def get_feature_array(frames, n_features):
+    hashed_features = np.zeros(n_features, dtype=int)
+    col = 0
+    for frame in frames:
+        dif_matrix = create_differences(frame)
+        #print (dif_matrix)
+        _hash = my_hash(dif_matrix)
+        index = int_generator(_hash) % n_features
+        if hashed_features[index] == 1:
+            col = col +1
+            #print ("coll on index " + str(index))
+        hashed_features[index] = 1
+    print (col)    
+    return hashed_features
+
+def int_generator(LSH_hashed_string):
+    #print (LSH_hashed_string)
+    value = 0
+    counter = 0
+    for char in LSH_hashed_string:
+        value += ord(char) + counter*4242
+        counter += 1
+    return value
 
 def show_keyframes(keyframes,filename):
     #print (len(keyframes))
@@ -122,7 +159,7 @@ def compare_images(imageA, imageB):
 #input source of the videos
 def create_subset(source):
     #files = ['0KAJ1U2BPIO7.mp4']
-    files = ['0KAJ1U2BPIO7.mp4', '3T7FSSZD3P6T.mp4', 'Z4ZMSTGKXTK3.mp4','00SXM76KD1X2.mp4']
+    files = ['0B0A9DAX03KT.mp4','0CFF1YUSITJE.mp4','0KAJ1U2BPIO7.mp4', '3T7FSSZD3P6T.mp4', 'Z4ZMSTGKXTK3.mp4','00SXM76KD1X2.mp4']
     dest = '.\subsubvideos'
     for the_file in os.listdir(dest):
         file_path = os.path.join(dest, the_file)
@@ -139,6 +176,7 @@ def create_subset(source):
 
 # Function to create hash (from David on Aula)
 def my_hash(differences):
+    #print (differences)
     hexi = ''
     for difference in differences:
         decimal_value = 0
@@ -149,7 +187,11 @@ def my_hash(differences):
             if (index % 8) == 7:
                 hex_string.append(hex(decimal_value)[2:].rjust(2, '0'))
                 decimal_value = 0
+            if not value:
+               decimal_value += 4**(index % 5)
         hexi += (''.join(''.join(hex_string)))
+    #print ("-------------------------------------------------------")
+    #print (hexi)
     return hexi
 
 # Function to create difference matrix
@@ -160,6 +202,7 @@ def create_differences(img_matrix):
     mat = np.zeros((sz_row,sz_col), dtype=bool)
     for row in range(img_matrix.shape[0]):
         for col in range(img_matrix.shape[1] - 1):
+            
             if img_matrix[row,col] > img_matrix[row, col+1]:
                 mat[row,col] = True
             else:
@@ -167,16 +210,55 @@ def create_differences(img_matrix):
 
     return mat
 
-def cluster(words):
+def jaccard_cluster(mov_features, mov_names):
+    #print (len(words))
+    #print (words)
+    
+    #mov_features = np.asarray(mov_features) #So that indexing with a list will work
+    
+    lev_similarity = np.array([[jcd(np.asanyarray(w1),np.asanyarray(w2)) for w1 in mov_features] for w2 in mov_features])
+    #print (len(lev_similarity))
+    #print (lev_similarity)
+    affprop = sklearn.cluster.AffinityPropagation()
+    affprop.fit(lev_similarity)
+    #print (affprop.labels_)
+    
+    for i in range(0, len(affprop.labels_)):
+        print(str(affprop.labels_[i]) + " " + mov_names[i])
+        #print (filenames[i])
+        
+    #for cluster_id in np.unique(affprop.labels_):   
+        #print (cluster_id)
+        #exemplar = filenames[affprop.cluster_centers_indices_[cluster_id]]
+        #print (exemplar)
+        #cluster = np.unique(filenames[np.nonzero(affprop.labels_==cluster_id)])
+        #print (cluster)
+        #cluster_str = ", ".join(cluster)
+        #print(" - *%s:* %s" % (exemplar, cluster_str))
+
+def cluster(words, filenames):
+    #print (len(words))
+    #print (words)
+    
     words = np.asarray(words) #So that indexing with a list will work
     lev_similarity = -1*np.array([[distance.levenshtein(w1,w2) for w1 in words] for w2 in words])
-    
-    affprop = sklearn.cluster.AffinityPropagation(affinity="precomputed", damping=0.5)
+    #print (len(lev_similarity))
+    #print (lev_similarity)
+    affprop = sklearn.cluster.AffinityPropagation()
     affprop.fit(lev_similarity)
-    for cluster_id in np.unique(affprop.labels_):
-        exemplar = words[affprop.cluster_centers_indices_[cluster_id]]
-        cluster = np.unique(words[np.nonzero(affprop.labels_==cluster_id)])
-        cluster_str = ", ".join(cluster)
-        print(" - *%s:* %s" % (exemplar, cluster_str))
-create_subset('videos')
+    #print (affprop.labels_)
+    
+    for i in range(0, len(affprop.labels_)):
+        print(str(affprop.labels_[i]) + " " + filenames[i])
+        #print (filenames[i])
+        
+    #for cluster_id in np.unique(affprop.labels_):   
+        #print (cluster_id)
+        #exemplar = filenames[affprop.cluster_centers_indices_[cluster_id]]
+        #print (exemplar)
+        #cluster = np.unique(filenames[np.nonzero(affprop.labels_==cluster_id)])
+        #print (cluster)
+        #cluster_str = ", ".join(cluster)
+        #print(" - *%s:* %s" % (exemplar, cluster_str))
+#create_subset('videos')
 keyframe(None)
