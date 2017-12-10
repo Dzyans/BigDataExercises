@@ -22,12 +22,16 @@ import shutil, stat
 import sklearn.cluster
 import distance
 from sklearn.metrics import jaccard_similarity_score as jcd
+import timeit
+
 
 def keyframe(num_of_frames):
     # try running on 0KAJ1U2BPIO7.mp4, 3T7FSSZD3P6T.mp4, Z4ZMSTGKXTK3.mp4
     hashes = []
     feature_lists = []
     filenames = []
+    hashdict = dict()
+    start_time = timeit.default_timer()
     for filename in os.listdir('.\subsubvideos'):
         #print filename
         images =[]
@@ -37,30 +41,46 @@ def keyframe(num_of_frames):
         count = 0
         success = True
         vis = None
+        frame_counter = 0
+        length = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
         
+        mid = length/2
+        
+        startframe = mid - 23
+        endframe = mid + 23
+        #width  = int(vidcap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        #height = int(vidcap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        #fps    = vidcap.get(cv2.CAP_PROP_FPS)
+        
+        #print(length)
+        #print(width)
+        #print(height)
+        #print(fps)
+        hash_list = []
         while success:
             success,image = vidcap.read()
             if success:
-                images.append(compare_first(image))
-                height, width = image.shape[:2]
-                #print( image.shape)
-                #print ( height)
-                #print ( width)
-                
-                if (count == 0):
-                    keyframe = image
-                    vis = compare_first(keyframe)
-                else:
-                    error, simm, _keyframe = pre_compare(keyframe,image)
-                    if (simm < 0.60):
-                        keyframe = image
-                        keyframes.append(_keyframe)
-                        #vis = np.concatenate((vis,_keyframe),axis=1)
-                count += 1
-            if (count == num_of_frames and num_of_frames is not None):
+                if (frame_counter >= startframe and frame_counter <= endframe):
+                    #images.append(compare_first(image))
+        #            height, width = image.shape[:2]
+                    #print( image.shape)
+                    #print ( height)
+                    #print ( width)
+                    difmatrix = create_differences(compare_first(image, filename))
+                    _hash = my_hash(difmatrix)
+                    hash_list.append(_hash)
+                    #vis = np.concatenate((vis,_keyframe),axis=1)
+                    count += 1
+                #else:
+                    #print("skipped below")
+            frame_counter += 1
+            if(frame_counter > endframe):
+                #print ("thats enough, next mov " + str(frame_counter))
                 break;
+            #if (count == num_of_frames and num_of_frames is not None):
+                #break;
         vidcap.release()
-                
+        hashdict[filename] = hash_list    
         #fig = plt.figure("concated"+ filename)
         #plt.imshow(vis, cmap = plt.cm.gray)
         #plt.axis("off")        
@@ -70,23 +90,97 @@ def keyframe(num_of_frames):
         
         #hashes.append(my_hash(mat))
         #print (len(images))
-        feature_lists.append(get_feature_array(keyframes, 1000))
+        #print (count)
+        #feature_lists.append(get_feature_array(images, 300))
     #print (len (feature_lists))
     #print (feature_lists[1])
-    jaccard_cluster(feature_lists, filenames)
+    elapsed = timeit.default_timer() - start_time
+    print ("Vids iterated and hashed in: " + str(elapsed) + " seconds")
+    print("done")
+   # print (hashdict["Z4ZMSTGKXTK3.mp4"])
+    #print (hashdict["0KAJ1U2BPIO7.mp4"])
+    
+    cluster_lookup = dict()
+    clusters = dict()
+    completed_keys = []
+    cluster_nr = 0
+    for key1 in hashdict:
+        
+        if key1 in cluster_lookup:
+            cluster_nr = cluster_lookup[key1]
+            cluster = clusters[cluster_nr]
+        else:
+            cluster_nr += 1
+            cluster = []
+            cluster.append(key1)
+        
+        clusters[cluster_nr] = cluster
+        cluster_lookup[key1] = cluster_nr
+        for key2 in hashdict:
+            #print(key1 + " "+ key2)
+            hit_counter = 0
+            if(key1 == key2 or key2 in completed_keys):
+                #print("breaking")
+                continue
+            
+            for th in hashdict[key1]:
+                for ch in hashdict[key2]:                    
+                    if th == ch:
+                        #print("found an equal " + key1 + " " + key2)
+                        hit_counter += 1
+            if(hit_counter > 1):
+                #match found                
+                clusters[cluster_nr].append(key2) #= key1 + " " + key2
+                cluster_lookup[key2] = cluster_nr
+        completed_keys.append(key1)
+            
+            
+        
+            
+                
+               
+                
+               
+        
+            #print (key1 + " -- " + key2 + " in common: " + str(hit_counter ))
+    
+    elapsed = timeit.default_timer() - start_time 
+    print ("loops of doom done in: " + str(elapsed) + " seconds")
+    print("done")           
+    
+    print(clusters)
+    
+    print("done")    
+    
+    #print (hashdict)
+    #jaccard_cluster(feature_lists, filenames)
     #cluster(hashes, filenames)
         #show_keyframes(keyframes, filename)
 
 
-def compare_first(image):
+def compare_first(image, filename):
+     
+         
      height, width = image.shape[:2]
-     image = image[20:height-20, 20:width-20] # Crop from x, y, w, h -> 100, 200, 300, 400
+     #if(filename == "Z4ZMSTGKXTK3.mp4" or filename == "0KAJ1U2BPIO7.mp4"):
+    # print (filename)
+     #print ("hhh "+ str(height))
+     #print ("ww "+ str(width))
+     heightstart = int((height/2)-100)
+     heightend = int(height-((height/2)-100))
+     widhtstart = int((width/2)-200)
+     widthend = int(width-((width/2)-200))
+    # print (heightstart)
+     #print (heightend)
+     #print (widhtstart)
+    # print (widthend)
+     image = image[heightstart:heightend, widhtstart:widthend] # Crop from x, y, w, h -> 100, 200, 300, 400
      image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
      image = cv2.resize(image, (8,9))
      return image
 
 def get_feature_array(frames, n_features):
-    print ("frames " + str(len(frames)))
+    #print ("frames " + str(len(frames)))
     hashed_features = np.zeros(n_features, dtype=int)
     col = 0
     for frame in frames:
@@ -94,11 +188,11 @@ def get_feature_array(frames, n_features):
         #print (dif_matrix)
         _hash = my_hash(dif_matrix)
         index = int_generator(_hash) % n_features
-        if hashed_features[index] == 1:
+        if hashed_features[index] >= 1:
             col = col +1
             #print ("coll on index " + str(index))
         hashed_features[index] = 1
-    print (col)    
+    #print (col)    
     return hashed_features
 
 def int_generator(LSH_hashed_string):
@@ -216,21 +310,36 @@ def create_differences(img_matrix):
 
 def jaccard_cluster(mov_features, mov_names):
     #print (len(words))
-    #print (words)
-    
+    #print (mov_features)
+    clusters = dict()
     #mov_features = np.asarray(mov_features) #So that indexing with a list will work
-    
+    print ("calculating sim matrix")
+    start_time = timeit.default_timer()
     lev_similarity = np.array([[jcd(np.asanyarray(w1),np.asanyarray(w2)) for w1 in mov_features] for w2 in mov_features])
-    print (len(lev_similarity))
+    elapsed = timeit.default_timer() - start_time
+    print ("sim calculated in: " + str(elapsed) + " seconds")
+    print("done")
+    #print (len(lev_similarity))
     #print (lev_similarity)
     affprop = sklearn.cluster.AffinityPropagation()
     affprop.fit(lev_similarity)
     #print (affprop.labels_)
     
-    for i in range(0, len(affprop.labels_)):
-        print(str(affprop.labels_[i]) + " " + mov_names[i])
+    #for i in range(0, len(affprop.labels_)):
+        #print(str(affprop.labels_[i]) + " " + mov_names[i])
         #print (filenames[i])
+    print ("gathering results")
+    for i in range (0, len(affprop.labels_)):
+        #print (affprop.labels_[i])
         
+        if affprop.labels_[i] not in clusters:
+            vids = []
+            vids.append(mov_names[i])
+            clusters[affprop.labels_[i]] = vids
+        else:
+            clusters[affprop.labels_[i]].append(mov_names[i])
+    print("done")  
+    print(clusters)
     #for cluster_id in np.unique(affprop.labels_):   
         #print (cluster_id)
         #exemplar = filenames[affprop.cluster_centers_indices_[cluster_id]]
@@ -242,8 +351,8 @@ def jaccard_cluster(mov_features, mov_names):
 
 def cluster(words, filenames):
     #print (len(words))
-    #print (words)
-    
+    print (words)
+    print ("djsafksjdaflkj")
     words = np.asarray(words) #So that indexing with a list will work
     lev_similarity = -1*np.array([[distance.levenshtein(w1,w2) for w1 in words] for w2 in words])
     print (len(lev_similarity))
