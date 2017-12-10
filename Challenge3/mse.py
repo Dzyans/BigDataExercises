@@ -435,5 +435,5 @@ def cluster(words, filenames):
         #print (cluster)
         #cluster_str = ", ".join(cluster)
         #print(" - *%s:* %s" % (exemplar, cluster_str))
-create_subset('videos')
+#create_subset('videos')
 keyframe(None)

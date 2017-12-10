@@ -34,18 +34,7 @@ def keyframe(num_of_frames):
         #print filename
         
         vidcap = cv2.VideoCapture('.\\subsubvideos\\' + filename)
-        
-        #length = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
-        #width  = int(vidcap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        #height = int(vidcap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        #fps    = vidcap.get(cv2.CAP_PROP_FPS)
-        
-        #print(length)
-        #print(width)
-        #print(height)
-        #print(fps)
-        
-        
+                
         success,image = vidcap.read()
         keyframes = []
         count = 0
@@ -84,9 +73,24 @@ def keyframe(num_of_frames):
         #print (len(hashes))
     cluster(hashes, filenames)
         #show_keyframes(keyframes, filename)
-def compare_first(image):
+def compare_first(image):     
      height, width = image.shape[:2]
-     image = image[20:height-20, 20:width-20] # Crop from x, y, w, h -> 100, 200, 300, 400
+     #if(filename == "Z4ZMSTGKXTK3.mp4" or filename == "0KAJ1U2BPIO7.mp4"):
+    # print (filename)
+     #print ("hhh "+ str(height))
+     #print ("ww "+ str(width))
+     if height < width:
+         heightstart = int((height/2)-100)
+         heightend = int(height-((height/2)-100))
+         widhtstart = int((width/2)-200)
+         widthend = int(width-((width/2)-200))
+     if height > width:
+         heightstart = int((height/2)-200)
+         heightend = int(height-((height/2)-200))
+         widhtstart = int((width/2)-100)
+         widthend = int(width-((width/2)-100))
+     
+     image = image[heightstart:heightend, widhtstart:widthend] # Crop from x, y, w, h -> 100, 200, 300, 400
      image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
      image = cv2.resize(image, (8,9))
      return image
@@ -107,8 +111,23 @@ def show_keyframes(keyframes,filename):
 def pre_compare(keyframe,image):
     #crop the image
     height, width = image.shape[:2]
-    keyframe = keyframe[20:height-20, 20:width-20] # Crop from x, y, w, h -> 100, 200, 300, 400
-    image = image[20:height-20, 20:width-20] # Crop from x, y, w, h -> 100, 200, 300, 400
+     #if(filename == "Z4ZMSTGKXTK3.mp4" or filename == "0KAJ1U2BPIO7.mp4"):
+    # print (filename)
+     #print ("hhh "+ str(height))
+     #print ("ww "+ str(width))
+    if height < width:
+         heightstart = int((height/2)-100)
+         heightend = int(height-((height/2)-100))
+         widhtstart = int((width/2)-200)
+         widthend = int(width-((width/2)-200))
+    if height > width:
+         heightstart = int((height/2)-200)
+         heightend = int(height-((height/2)-200))
+         widhtstart = int((width/2)-100)
+         widthend = int(width-((width/2)-100))
+   
+    keyframe = keyframe[heightstart:heightend, widhtstart:widthend]
+    image = image[heightstart:heightend, widhtstart:widthend] # Crop from x, y, w, h -> 100, 200, 300, 400
 
     #greyscale the image
     keyframe = cv2.cvtColor(keyframe, cv2.COLOR_BGR2GRAY)
@@ -187,18 +206,29 @@ def create_differences(img_matrix):
 
     return mat
 
-def cluster(videos, filenames):
+def writeToFile(hashdict, filepath):
+    #print "writing " + str(len(the_list)) + " to " + filepath
+    start_time = timeit.default_timer()
+    with open(filepath, "a") as file_handler:
+        for key in hashdict:
+            for val in hashdict[key]:                
+                file_handler.write(val.replace(' ', '')[:-4].upper() + " ")
+            file_handler.write("\n")
+    elapsed = timeit.default_timer() - start_time
+    print ("wrting to file done in: " + str(elapsed))
+
+def cluster(words, filenames):
     clusters = dict()
-    videos = np.asarray(videos) #So that indexing with a list will work
-    print ("calculating similarity on " + str(len(videos)) + " items")
+    words = np.asarray(words) #So that indexing with a list will work
+    print ("calculating similarity on " + str(len(words)) + " items")
     
     start_time = timeit.default_timer()
-    lev_similarity = -1*np.array([[distance.levenshtein(w1,w2) for w1 in videos] for w2 in videos])
+    lev_similarity = -1*np.array([[distance.levenshtein(w1,w2) for w1 in words] for w2 in words])
     elapsed = timeit.default_timer() - start_time
     print ("sim calculated in: " + str(elapsed) + " seconds")
     print("done")
     
-    affprop = sklearn.cluster.AffinityPropagation(  damping=0.5)
+    affprop = sklearn.cluster.AffinityPropagation(affinity="precomputed", damping=0.5)
 
     print("fitting and clustering")
     affprop.fit(lev_similarity)
@@ -206,7 +236,7 @@ def cluster(videos, filenames):
     
     print ("gathering results")
     for i in range (0, len(affprop.labels_)):
-        #print (affprop.labels_[i])
+        
         
         if affprop.labels_[i] not in clusters:
             vids = []
@@ -214,15 +244,15 @@ def cluster(videos, filenames):
             clusters[affprop.labels_[i]] = vids
         else:
             clusters[affprop.labels_[i]].append(filenames[i])
-    print("done")
+    writeToFile(clusters, "levenshtein_results_all.txt")
+    print("done")  
+    print(clusters)
         
     #for cluster_id in np.unique(affprop.labels_):
      #   exemplar = videos[affprop.cluster_centers_indices_[cluster_id]]
       #  cluster = np.unique(videos[np.nonzero(affprop.labels_==cluster_id)])
        # cluster_str = ", ".join(cluster)
         #print(" - *%s:* %s" % (exemplar, cluster_str))
-        
-    print(clusters)
     return clusters
 #create_subset('videos')
 keyframe(None)
