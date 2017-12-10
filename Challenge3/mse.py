@@ -32,10 +32,10 @@ def keyframe(num_of_frames):
     filenames = []
     hashdict = dict()
     start_time = timeit.default_timer()
-    for filename in os.listdir('.\\videos'):
+    for filename in os.listdir('.\\subsubvideos'):
         #print filename
         images =[]
-        vidcap = cv2.VideoCapture('.\\videos\\' + filename)
+        vidcap = cv2.VideoCapture('.\\subsubvideos\\' + filename)
         success,image = vidcap.read()
         keyframes = []
         count = 0
@@ -107,21 +107,24 @@ def keyframe(num_of_frames):
     outer_loop_counter = 0
     hit_lookup = dict()
     cluster = []
-    
+    cluster_counter = 0
     print (len(hashdict))
     for key1 in hashdict:
         outer_loop_counter += 1
         if outer_loop_counter % 100 == 0:
             print(outer_loop_counter)
-        if key1 in cluster_lookup:
+        if key1 in cluster_lookup:            
             cluster_nr = cluster_lookup[key1]
             cluster = clusters[cluster_nr]
+            print (key1 + "found in lookup at " + str(cluster_nr))
         else:
-            cluster_nr += 1
+            cluster_nr = cluster_counter
             cluster = []
             cluster.append(key1)
+            print("appending " + key1 + " to cluster nr " + str(cluster_nr))
             clusters[cluster_nr] = cluster
             cluster_lookup[key1] = cluster_nr
+            cluster_counter += 1
         
         
         
@@ -139,13 +142,17 @@ def keyframe(num_of_frames):
                         hit_counter += 1
             if(hit_counter > 2):
                 #match found
-                if key1 == "3T7FSSZD3P6T.mp4":
-                    print("it is happening")
-               
-                if key2 not in clusters[cluster_nr]:                
-                    clusters[cluster_nr].append(key2) #= key1 + " " + key2
-                    cluster_lookup[key2] = cluster_nr
-                    hit_lookup[key2] = hit_counter
+                print ("match found: adding " + key2 + " to cluster nr " + str(cluster_nr) + " hits: " + str(hit_counter))
+                if key2 not in clusters[cluster_nr]:
+                    if key2 in hit_lookup and hit_counter > hit_lookup[key2]:
+                        #we is moving the key from the old cluster
+                        clusters[cluster_lookup[key2]].remove(key2)
+                   
+                    if key2 not in hit_lookup or hit_counter > hit_lookup[key2]:
+                        clusters[cluster_nr].append(key2) #= key1 + " " + key2
+                        cluster_lookup[key2] = cluster_nr
+                        hit_lookup[key2] = hit_counter
+                        
                 #elif hit_counter > hit_lookup[key2]:
                  #   ##we found a better match
                   #  print ("better match found " + str(hit_counter) + " vs. "+ str(hit_lookup[key2] ))
@@ -190,10 +197,16 @@ def compare_first(image, filename):
     # print (filename)
      #print ("hhh "+ str(height))
      #print ("ww "+ str(width))
-     heightstart = int((height/2)-100)
-     heightend = int(height-((height/2)-100))
-     widhtstart = int((width/2)-200)
-     widthend = int(width-((width/2)-200))
+     if height < width:
+         heightstart = int((height/2)-100)
+         heightend = int(height-((height/2)-100))
+         widhtstart = int((width/2)-200)
+         widthend = int(width-((width/2)-200))
+     if height > width:
+         heightstart = int((height/2)-200)
+         heightend = int(height-((height/2)-200))
+         widhtstart = int((width/2)-100)
+         widthend = int(width-((width/2)-100))
     # print (heightstart)
      #print (heightend)
      #print (widhtstart)
