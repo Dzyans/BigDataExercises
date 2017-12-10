@@ -32,10 +32,10 @@ def keyframe(num_of_frames):
     filenames = []
     hashdict = dict()
     start_time = timeit.default_timer()
-    for filename in os.listdir('.\subsubvideos'):
+    for filename in os.listdir('.\\videos'):
         #print filename
         images =[]
-        vidcap = cv2.VideoCapture('.\\subsubvideos\\' + filename)
+        vidcap = cv2.VideoCapture('.\\videos\\' + filename)
         success,image = vidcap.read()
         keyframes = []
         count = 0
@@ -106,6 +106,7 @@ def keyframe(num_of_frames):
     cluster_nr = 0
     outer_loop_counter = 0
     hit_lookup = dict()
+    cluster = []
     
     print (len(hashdict))
     for key1 in hashdict:
@@ -136,7 +137,7 @@ def keyframe(num_of_frames):
                     if th == ch:
                         #print("found an equal " + key1 + " " + key2)
                         hit_counter += 1
-            if(hit_counter > 1):
+            if(hit_counter > 2):
                 #match found
                 if key1 == "3T7FSSZD3P6T.mp4":
                     print("it is happening")
@@ -145,12 +146,12 @@ def keyframe(num_of_frames):
                     clusters[cluster_nr].append(key2) #= key1 + " " + key2
                     cluster_lookup[key2] = cluster_nr
                     hit_lookup[key2] = hit_counter
-                elif hit_counter > hit_lookup[key2]:
-                    ##we found a better match
-                    print ("better match found " + str(hit_counter) + " vs. "+ str(hit_lookup[key2] ))
-                    clusters[cluster_lookup[key2]].remove(key2)
-                    clusters[cluster_nr].append(key2)
-                    hit_lookup[key2]= hit_counter
+                #elif hit_counter > hit_lookup[key2]:
+                 #   ##we found a better match
+                  #  print ("better match found " + str(hit_counter) + " vs. "+ str(hit_lookup[key2] ))
+                   # clusters[cluster_lookup[key2]].remove(key2)
+                    #clusters[cluster_nr].append(key2)
+                    #hit_lookup[key2]= hit_counter
         completed_keys.append(key1)
             
             
@@ -166,7 +167,7 @@ def keyframe(num_of_frames):
     elapsed = timeit.default_timer() - start_loop
     print ("loops of doom done in: " + str(elapsed) + " seconds")
          
-    
+    writeToFile(clusters, "results_all.txt")
     for key in clusters:
         if len(clusters[key]) > 1:
             print(clusters[key])
@@ -256,6 +257,17 @@ def pre_compare(keyframe,image):
     # compare the images
     simm, error = compare_images(keyframe, image)
     return simm, error ,keyframe
+
+def writeToFile(hashdict, filepath):
+    #print "writing " + str(len(the_list)) + " to " + filepath
+    start_time = timeit.default_timer()
+    with open(filepath, "a") as file_handler:
+        for key in hashdict:
+            for val in hashdict[key]:                
+                file_handler.write(val.replace(' ', '')[:-4].upper() + " ")
+            file_handler.write("\n")
+    elapsed = timeit.default_timer() - start_time
+    print ("wrting to file done in: " + str(elapsed))
 
 def mse(imageA, imageB):
 	# the 'Mean Squared Error' between the two images is the
