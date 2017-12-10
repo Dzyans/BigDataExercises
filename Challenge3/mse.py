@@ -46,8 +46,8 @@ def keyframe(num_of_frames):
         
         mid = length/2
         
-        startframe = mid - 23
-        endframe = mid + 23
+        startframe = mid - 50
+        endframe = mid + 50
         #width  = int(vidcap.get(cv2.CAP_PROP_FRAME_WIDTH))
         #height = int(vidcap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         #fps    = vidcap.get(cv2.CAP_PROP_FPS)
@@ -99,13 +99,19 @@ def keyframe(num_of_frames):
     print("done")
    # print (hashdict["Z4ZMSTGKXTK3.mp4"])
     #print (hashdict["0KAJ1U2BPIO7.mp4"])
-    
+    start_loop = timeit.default_timer()
     cluster_lookup = dict()
     clusters = dict()
     completed_keys = []
     cluster_nr = 0
+    outer_loop_counter = 0
+    hit_lookup = dict()
+    
+    print (len(hashdict))
     for key1 in hashdict:
-        
+        outer_loop_counter += 1
+        if outer_loop_counter % 100 == 0:
+            print(outer_loop_counter)
         if key1 in cluster_lookup:
             cluster_nr = cluster_lookup[key1]
             cluster = clusters[cluster_nr]
@@ -113,9 +119,11 @@ def keyframe(num_of_frames):
             cluster_nr += 1
             cluster = []
             cluster.append(key1)
+            clusters[cluster_nr] = cluster
+            cluster_lookup[key1] = cluster_nr
         
-        clusters[cluster_nr] = cluster
-        cluster_lookup[key1] = cluster_nr
+        
+        
         for key2 in hashdict:
             #print(key1 + " "+ key2)
             hit_counter = 0
@@ -129,9 +137,20 @@ def keyframe(num_of_frames):
                         #print("found an equal " + key1 + " " + key2)
                         hit_counter += 1
             if(hit_counter > 1):
-                #match found                
-                clusters[cluster_nr].append(key2) #= key1 + " " + key2
-                cluster_lookup[key2] = cluster_nr
+                #match found
+                if key1 == "3T7FSSZD3P6T.mp4":
+                    print("it is happening")
+               
+                if key2 not in clusters[cluster_nr]:                
+                    clusters[cluster_nr].append(key2) #= key1 + " " + key2
+                    cluster_lookup[key2] = cluster_nr
+                    hit_lookup[key2] = hit_counter
+                elif hit_counter > hit_lookup[key2]:
+                    ##we found a better match
+                    print ("better match found " + str(hit_counter) + " vs. "+ str(hit_lookup[key2] ))
+                    clusters[cluster_lookup[key2]].remove(key2)
+                    clusters[cluster_nr].append(key2)
+                    hit_lookup[key2]= hit_counter
         completed_keys.append(key1)
             
             
@@ -144,12 +163,16 @@ def keyframe(num_of_frames):
         
             #print (key1 + " -- " + key2 + " in common: " + str(hit_counter ))
     
-    elapsed = timeit.default_timer() - start_time 
+    elapsed = timeit.default_timer() - start_loop
     print ("loops of doom done in: " + str(elapsed) + " seconds")
-    print("done")           
+         
     
-    print(clusters)
-    
+    for key in clusters:
+        if len(clusters[key]) > 1:
+            print(clusters[key])
+    #print(clusters)
+    elapsed = timeit.default_timer() - start_time 
+    print ("all done in: " + str(elapsed) + " seconds")
     print("done")    
     
     #print (hashdict)
