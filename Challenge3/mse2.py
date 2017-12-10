@@ -30,10 +30,10 @@ def keyframe(num_of_frames):
     counter = 0
     hashes = []
     filenames = []
-    for filename in os.listdir('.\videos'):
+    for filename in os.listdir('.\subsubvideos'):
         #print filename
         
-        vidcap = cv2.VideoCapture('.\\videos\\' + filename)
+        vidcap = cv2.VideoCapture('.\\subsubvideos\\' + filename)
                 
         success,image = vidcap.read()
         keyframes = []
@@ -225,14 +225,15 @@ def cluster(words, filenames):
     start_time = timeit.default_timer()
     lev_similarity = -1*np.array([[distance.levenshtein(w1,w2) for w1 in words] for w2 in words])
     elapsed = timeit.default_timer() - start_time
-    print ("sim calculated in: " + str(elapsed) + " seconds")
+    print("sim calculated in: " + str(elapsed) + " seconds")
     print("done")
     
     affprop = sklearn.cluster.AffinityPropagation(affinity="precomputed", damping=0.5)
 
     print("fitting and clustering")
     affprop.fit(lev_similarity)
-    print("done")
+    elapsed = timeit.default_timer() - start_time
+    print("fitting done after " + str(elapsed) + " seconds")
     
     print ("gathering results")
     for i in range (0, len(affprop.labels_)):
@@ -244,6 +245,9 @@ def cluster(words, filenames):
             clusters[affprop.labels_[i]] = vids
         else:
             clusters[affprop.labels_[i]].append(filenames[i])
+    elapsed = timeit.default_timer() - start_time
+    print ("all done in: " + str(elapsed))
+    
     writeToFile(clusters, "levenshtein_results_all.txt")
     print("done")  
     print(clusters)
@@ -255,4 +259,7 @@ def cluster(words, filenames):
         #print(" - *%s:* %s" % (exemplar, cluster_str))
     return clusters
 #create_subset('videos')
+start_time = timeit.default_timer()
 keyframe(None)
+elapsed = timeit.default_timer() - start_time
+print("the whole shabang done in: " + str(elapsed) + " seconds")
