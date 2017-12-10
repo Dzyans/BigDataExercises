@@ -30,10 +30,10 @@ def keyframe(num_of_frames):
     counter = 0
     hashes = []
     filenames = []
-    for filename in os.listdir('.\subsubvideos'):
+    for filename in os.listdir('.\videos'):
         #print filename
         
-        vidcap = cv2.VideoCapture('.\\subsubvideos\\' + filename)
+        vidcap = cv2.VideoCapture('.\\videos\\' + filename)
                 
         success,image = vidcap.read()
         keyframes = []

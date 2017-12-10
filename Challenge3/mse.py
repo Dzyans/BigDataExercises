@@ -32,10 +32,10 @@ def keyframe(num_of_frames):
     filenames = []
     hashdict = dict()
     start_time = timeit.default_timer()
-    for filename in os.listdir('.\\buck'):
+    for filename in os.listdir('.\\videos'):
         #print filename
         images =[]
-        vidcap = cv2.VideoCapture('.\\buck\\' + filename)
+        vidcap = cv2.VideoCapture('.\\videos\\' + filename)
         success,image = vidcap.read()
         keyframes = []
         count = 0
@@ -98,7 +98,9 @@ def keyframe(num_of_frames):
     print ("Vids iterated and hashed in: " + str(elapsed) + " seconds")
     print("done")
     
-    jaccard_cluster(feature_lists, filenames)
+    loopOfDoom(hashdict)
+    
+    #jaccard_cluster(feature_lists, filenames)
    # print (hashdict["Z4ZMSTGKXTK3.mp4"])
     #print (hashdict["0KAJ1U2BPIO7.mp4"])
     
@@ -178,13 +180,7 @@ def loopOfDoom(hashdict):
     elapsed = timeit.default_timer() - start_loop
     print ("loops of doom done in: " + str(elapsed) + " seconds")
          
-    writeToFile(clusters, "results_all.txt")
-    for key in clusters:
-        if len(clusters[key]) > 1:
-            print(clusters[key])
-    #print(clusters)
-    elapsed = timeit.default_timer() - start_time 
-
+    writeToFile(clusters, "results_sub.txt")
 
 def compare_first(image, filename):
      
