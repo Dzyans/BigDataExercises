@@ -32,10 +32,10 @@ def keyframe(num_of_frames):
     filenames = []
     hashdict = dict()
     start_time = timeit.default_timer()
-    for filename in os.listdir('.\\subsubvideos'):
+    for filename in os.listdir('.\\buck'):
         #print filename
         images =[]
-        vidcap = cv2.VideoCapture('.\\subsubvideos\\' + filename)
+        vidcap = cv2.VideoCapture('.\\buck\\' + filename)
         success,image = vidcap.read()
         keyframes = []
         count = 0
@@ -91,14 +91,26 @@ def keyframe(num_of_frames):
         #hashes.append(my_hash(mat))
         #print (len(images))
         #print (count)
-        #feature_lists.append(get_feature_array(images, 300))
+        feature_lists.append(get_feature_array(hash_list, 600))
     #print (len (feature_lists))
     #print (feature_lists[1])
     elapsed = timeit.default_timer() - start_time
     print ("Vids iterated and hashed in: " + str(elapsed) + " seconds")
     print("done")
+    
+    jaccard_cluster(feature_lists, filenames)
    # print (hashdict["Z4ZMSTGKXTK3.mp4"])
     #print (hashdict["0KAJ1U2BPIO7.mp4"])
+    
+    print ("all done in: " + str(elapsed) + " seconds")
+    print("done")    
+    
+    #print (hashdict)
+    
+    #cluster(hashes, filenames)
+        #show_keyframes(keyframes, filename)
+
+def loopOfDoom(hashdict):
     start_loop = timeit.default_timer()
     cluster_lookup = dict()
     clusters = dict()
@@ -116,12 +128,12 @@ def keyframe(num_of_frames):
         if key1 in cluster_lookup:            
             cluster_nr = cluster_lookup[key1]
             cluster = clusters[cluster_nr]
-            print (key1 + "found in lookup at " + str(cluster_nr))
+            #print (key1 + "found in lookup at " + str(cluster_nr))
         else:
             cluster_nr = cluster_counter
             cluster = []
             cluster.append(key1)
-            print("appending " + key1 + " to cluster nr " + str(cluster_nr))
+            #print("appending " + key1 + " to cluster nr " + str(cluster_nr))
             clusters[cluster_nr] = cluster
             cluster_lookup[key1] = cluster_nr
             cluster_counter += 1
@@ -142,7 +154,7 @@ def keyframe(num_of_frames):
                         hit_counter += 1
             if(hit_counter > 2):
                 #match found
-                print ("match found: adding " + key2 + " to cluster nr " + str(cluster_nr) + " hits: " + str(hit_counter))
+                #print ("match found: adding " + key2 + " to cluster nr " + str(cluster_nr) + " hits: " + str(hit_counter))
                 if key2 not in clusters[cluster_nr]:
                     if key2 in hit_lookup and hit_counter > hit_lookup[key2]:
                         #we is moving the key from the old cluster
@@ -161,14 +173,6 @@ def keyframe(num_of_frames):
                     #hit_lookup[key2]= hit_counter
         completed_keys.append(key1)
             
-            
-        
-            
-                
-               
-                
-               
-        
             #print (key1 + " -- " + key2 + " in common: " + str(hit_counter ))
     
     elapsed = timeit.default_timer() - start_loop
@@ -180,13 +184,6 @@ def keyframe(num_of_frames):
             print(clusters[key])
     #print(clusters)
     elapsed = timeit.default_timer() - start_time 
-    print ("all done in: " + str(elapsed) + " seconds")
-    print("done")    
-    
-    #print (hashdict)
-    #jaccard_cluster(feature_lists, filenames)
-    #cluster(hashes, filenames)
-        #show_keyframes(keyframes, filename)
 
 
 def compare_first(image, filename):
@@ -216,7 +213,7 @@ def compare_first(image, filename):
      image = cv2.resize(image, (8,9))
      return image
 
-def get_feature_array(frames, n_features):
+def get_feature_array2(frames, n_features):
     #print ("frames " + str(len(frames)))
     hashed_features = np.zeros(n_features, dtype=int)
     col = 0
@@ -224,6 +221,20 @@ def get_feature_array(frames, n_features):
         dif_matrix = create_differences(frame)
         #print (dif_matrix)
         _hash = my_hash(dif_matrix)
+        index = int_generator(_hash) % n_features
+        if hashed_features[index] >= 1:
+            col = col +1
+            #print ("coll on index " + str(index))
+        hashed_features[index] = 1
+    #print (col)    
+    return hashed_features
+
+def get_feature_array(hashes, n_features):
+    #print ("frames " + str(len(frames)))
+    hashed_features = np.zeros(n_features, dtype=int)
+    col = 0
+    for _hash in hashes:
+        
         index = int_generator(_hash) % n_features
         if hashed_features[index] >= 1:
             col = col +1
@@ -333,6 +344,8 @@ def my_hash(differences):
             if (index % 3) == 2:
                 hex_string.append(hex(decimal_value)[2:].rjust(2, '0'))
                 decimal_value = 0
+            if (index % 4) == 1:
+                hex_string.append(hex(decimal_value)[2:].rjust(2, '0'))
             if not value:
                decimal_value += 4**(index % 5)
         hexi += (''.join(''.join(hex_string)))
@@ -378,7 +391,8 @@ def jaccard_cluster(mov_features, mov_names):
         #print (filenames[i])
     print ("gathering results")
     for i in range (0, len(affprop.labels_)):
-        #print (affprop.labels_[i])
+        print (affprop.labels_[i])
+        print (mov_names[i])
         
         if affprop.labels_[i] not in clusters:
             vids = []
@@ -386,6 +400,7 @@ def jaccard_cluster(mov_features, mov_names):
             clusters[affprop.labels_[i]] = vids
         else:
             clusters[affprop.labels_[i]].append(mov_names[i])
+    writeToFile(clusters, "jaccard_results_all.txt")
     print("done")  
     print(clusters)
     #for cluster_id in np.unique(affprop.labels_):   
@@ -399,8 +414,7 @@ def jaccard_cluster(mov_features, mov_names):
 
 def cluster(words, filenames):
     #print (len(words))
-    print (words)
-    print ("djsafksjdaflkj")
+ 
     words = np.asarray(words) #So that indexing with a list will work
     lev_similarity = -1*np.array([[distance.levenshtein(w1,w2) for w1 in words] for w2 in words])
     print (len(lev_similarity))
@@ -421,5 +435,5 @@ def cluster(words, filenames):
         #print (cluster)
         #cluster_str = ", ".join(cluster)
         #print(" - *%s:* %s" % (exemplar, cluster_str))
-#create_subset('videos')
+create_subset('videos')
 keyframe(None)
