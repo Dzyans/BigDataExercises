@@ -23,24 +23,25 @@ import sklearn.cluster
 import distance
 from sklearn.metrics import jaccard_similarity_score as jcd
 import timeit
+from random import randrange
 
 
 def keyframe(num_of_frames):
     # try running on 0KAJ1U2BPIO7.mp4, 3T7FSSZD3P6T.mp4, Z4ZMSTGKXTK3.mp4
-    hashes = []
+    
     feature_lists = []
     filenames = []
     hashdict = dict()
     start_time = timeit.default_timer()
     for filename in os.listdir('.\\videos'):
         #print filename
-        images =[]
+  
         vidcap = cv2.VideoCapture('.\\videos\\' + filename)
         success,image = vidcap.read()
-        keyframes = []
+   
         count = 0
         success = True
-        vis = None
+
         frame_counter = 0
         length = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
         
@@ -48,31 +49,19 @@ def keyframe(num_of_frames):
         
         startframe = mid - 50
         endframe = mid + 50
-        #width  = int(vidcap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        #height = int(vidcap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        #fps    = vidcap.get(cv2.CAP_PROP_FPS)
-        
-        #print(length)
-        #print(width)
-        #print(height)
-        #print(fps)
+ 
         hash_list = []
         while success:
             success,image = vidcap.read()
             if success:
                 if (frame_counter >= startframe and frame_counter <= endframe):
-                    #images.append(compare_first(image))
-        #            height, width = image.shape[:2]
-                    #print( image.shape)
-                    #print ( height)
-                    #print ( width)
+        
                     difmatrix = create_differences(compare_first(image, filename))
                     _hash = my_hash(difmatrix)
                     hash_list.append(_hash)
-                    #vis = np.concatenate((vis,_keyframe),axis=1)
+            
                     count += 1
-                #else:
-                    #print("skipped below")
+    
             frame_counter += 1
             if(frame_counter > endframe):
                 #print ("thats enough, next mov " + str(frame_counter))
@@ -91,7 +80,7 @@ def keyframe(num_of_frames):
         #hashes.append(my_hash(mat))
         #print (len(images))
         #print (count)
-        feature_lists.append(get_feature_array(hash_list, 600))
+        #feature_lists.append(get_feature_array(hash_list, 600))
     #print (len (feature_lists))
     #print (feature_lists[1])
     elapsed = timeit.default_timer() - start_time
@@ -130,57 +119,48 @@ def loopOfDoom(hashdict):
         if key1 in cluster_lookup:            
             cluster_nr = cluster_lookup[key1]
             cluster = clusters[cluster_nr]
-            #print (key1 + "found in lookup at " + str(cluster_nr))
+            
         else:
             cluster_nr = cluster_counter
             cluster = []
             cluster.append(key1)
-            #print("appending " + key1 + " to cluster nr " + str(cluster_nr))
+            
             clusters[cluster_nr] = cluster
             cluster_lookup[key1] = cluster_nr
             cluster_counter += 1
         
-        
-        
         for key2 in hashdict:
-            #print(key1 + " "+ key2)
+            
             hit_counter = 0
             if(key1 == key2 or key2 in completed_keys):
-                #print("breaking")
+                
                 continue
             
             for th in hashdict[key1]:
                 for ch in hashdict[key2]:                    
                     if th == ch:
-                        #print("found an equal " + key1 + " " + key2)
+                        
                         hit_counter += 1
             if(hit_counter > 2):
                 #match found
-                #print ("match found: adding " + key2 + " to cluster nr " + str(cluster_nr) + " hits: " + str(hit_counter))
+                
                 if key2 not in clusters[cluster_nr]:
                     if key2 in hit_lookup and hit_counter > hit_lookup[key2]:
                         #we is moving the key from the old cluster
                         clusters[cluster_lookup[key2]].remove(key2)
                    
                     if key2 not in hit_lookup or hit_counter > hit_lookup[key2]:
-                        clusters[cluster_nr].append(key2) #= key1 + " " + key2
+                        clusters[cluster_nr].append(key2) 
                         cluster_lookup[key2] = cluster_nr
                         hit_lookup[key2] = hit_counter
-                        
-                #elif hit_counter > hit_lookup[key2]:
-                 #   ##we found a better match
-                  #  print ("better match found " + str(hit_counter) + " vs. "+ str(hit_lookup[key2] ))
-                   # clusters[cluster_lookup[key2]].remove(key2)
-                    #clusters[cluster_nr].append(key2)
-                    #hit_lookup[key2]= hit_counter
         completed_keys.append(key1)
             
-            #print (key1 + " -- " + key2 + " in common: " + str(hit_counter ))
+            
     
     elapsed = timeit.default_timer() - start_loop
     print ("loops of doom done in: " + str(elapsed) + " seconds")
          
-    writeToFile(clusters, "results_sub.txt")
+    writeToFile(clusters, "results_final_doom.txt")
 
 def compare_first(image, filename):
      
@@ -237,6 +217,9 @@ def get_feature_array(hashes, n_features):
             #print ("coll on index " + str(index))
         hashed_features[index] = 1
     #print (col)    
+    for i in range (0, len(hashed_features)):
+        if hashed_features[i] != 1:
+            hashed_features[i] = randrange(4, 102311, 2)
     return hashed_features
 
 def int_generator(LSH_hashed_string):
@@ -372,12 +355,15 @@ def jaccard_cluster(mov_features, mov_names):
     #mov_features = np.asarray(mov_features) #So that indexing with a list will work
     print ("calculating sim matrix")
     start_time = timeit.default_timer()
+    for hej in mov_features:
+        for kek in mov_features:
+            print(np.intersect1d(hej,kek))
     lev_similarity = np.array([[jcd(np.asanyarray(w1),np.asanyarray(w2)) for w1 in mov_features] for w2 in mov_features])
     elapsed = timeit.default_timer() - start_time
     print ("sim calculated in: " + str(elapsed) + " seconds")
     print("done")
     #print (len(lev_similarity))
-    #print (lev_similarity)
+    #print (lev_similarity2)
     affprop = sklearn.cluster.AffinityPropagation()
     affprop.fit(lev_similarity)
     #print (affprop.labels_)
@@ -399,37 +385,6 @@ def jaccard_cluster(mov_features, mov_names):
     writeToFile(clusters, "jaccard_results_all.txt")
     print("done")  
     print(clusters)
-    #for cluster_id in np.unique(affprop.labels_):   
-        #print (cluster_id)
-        #exemplar = filenames[affprop.cluster_centers_indices_[cluster_id]]
-        #print (exemplar)
-        #cluster = np.unique(filenames[np.nonzero(affprop.labels_==cluster_id)])
-        #print (cluster)
-        #cluster_str = ", ".join(cluster)
-        #print(" - *%s:* %s" % (exemplar, cluster_str))
-
-def cluster(words, filenames):
-    #print (len(words))
- 
-    words = np.asarray(words) #So that indexing with a list will work
-    lev_similarity = -1*np.array([[distance.levenshtein(w1,w2) for w1 in words] for w2 in words])
-    print (len(lev_similarity))
-    #print (lev_similarity)
-    affprop = sklearn.cluster.AffinityPropagation()
-    affprop.fit(lev_similarity)
-    #print (affprop.labels_)
     
-    for i in range(0, len(affprop.labels_)):
-        print(str(affprop.labels_[i]) + " " + filenames[i])
-        #print (filenames[i])
-        
-    #for cluster_id in np.unique(affprop.labels_):   
-        #print (cluster_id)
-        #exemplar = filenames[affprop.cluster_centers_indices_[cluster_id]]
-        #print (exemplar)
-        #cluster = np.unique(filenames[np.nonzero(affprop.labels_==cluster_id)])
-        #print (cluster)
-        #cluster_str = ", ".join(cluster)
-        #print(" - *%s:* %s" % (exemplar, cluster_str))
 #create_subset('videos')
 keyframe(None)

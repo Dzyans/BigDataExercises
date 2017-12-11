@@ -26,14 +26,14 @@ def rand_index(clusters):
 					memory_clusters[element] = c
 				return c
 
-	x = map(lambda e: ics(e, clusters, 'clusters'), elems)
-	y = map(lambda e: ics(e, truth, 'truth'), elems)
+	x = list(map(lambda e: ics(e, clusters, 'clusters'), elems))
+	y = list(map(lambda e: ics(e, truth, 'truth'), elems))
 
 	return adjusted_rand_score(x,y)
 
 
 def load_cluster(filename):
-    clusters = list()
+    clusters = []
     with open(filename, 'r') as searchfile:            
             for line in searchfile:
                 cluster = set()
@@ -42,9 +42,9 @@ def load_cluster(filename):
                 for word in words:
                     cluster.add(word)
                 clusters.append(cluster)    
-    print (clusters)            
+    #print (clusters)            
     return clusters
     
 
-clusters = load_cluster("results_all.txt")
-rand_index(clusters)
+clusters = load_cluster("results_final_doom.txt")
+print(rand_index(clusters))
