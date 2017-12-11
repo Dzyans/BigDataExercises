@@ -4,7 +4,7 @@ truth = [set(['DMDR1U2RA7VN', 'K29U1709EA5R', 'D3NAY0YYFO4P', '58D4CGTDM5VX', 'Z
 
 from sklearn.metrics import adjusted_rand_score
 
-def rand_index(clusters):
+def rand_index3(clusters):
 	elems = list(set.union(*truth))
 
 	# Index of Containing Set
@@ -31,6 +31,33 @@ def rand_index(clusters):
 
 	return adjusted_rand_score(x,y)
 
+## for python2 - because I was to lazy to check the version in the code
+def rand_index2(clusters):
+	elems = list(set.union(*truth))
+
+	# Index of Containing Set
+	memory_truth = {}
+	memory_clusters = {}
+	def ics(element, set_list, set_list_name):
+		if set_list_name == "truth":
+			if element in memory_truth:
+				return memory_truth[element]
+		if set_list_name == "clusters":
+			if element in memory_clusters:
+				return memory_clusters[element]
+
+		for c, s in enumerate(set_list):
+			if element in s:
+				if set_list_name == "truth":
+					memory_truth[element] = c
+				if set_list_name == "clusters":
+					memory_clusters[element] = c
+				return c
+
+	x = map(lambda e: ics(e, clusters, 'clusters'), elems)
+	y = map(lambda e: ics(e, truth, 'truth'), elems)
+
+	return adjusted_rand_score(x,y)
 
 def load_cluster(filename):
     clusters = []
@@ -46,5 +73,5 @@ def load_cluster(filename):
     return clusters
     
 
-clusters = load_cluster("results_final_doom.txt")
-print(rand_index(clusters))
+clusters = load_cluster("brute_results_final.txt")
+print(rand_index3(clusters))
